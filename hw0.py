@@ -52,7 +52,7 @@ def neighborClassify(featureArray, trainArray):
     return final
 
 
-print(neighborClassify(featureArray, trainArray))
+# print(neighborClassify(featureArray, trainArray))
 
 
 # 2. Write a function called recalls that takes in a list of approximated class labels output by
@@ -71,9 +71,30 @@ trueLabels=      [1,1,0,0,0,0,1,1,1]
 
 def recalls(classifierOutput, trueLabels):
     # so find how many classes there are 
-    
-    # recallX =TrueClassX/AllClassX
+    # we are told classes follow 0,1, 
+    # and we assume trues guesses has at least one of last classes..  
+    top = max(trueLabels)
+    print("top ", top)
 
+    # 
+    classes = [0] * top + 1
+    # count the number of each class guess from classifierOutput
+    # so we need to loop through classifierOutput
+    for classifier in classifierOutput:
+
+        # seeing which class was guessed
+        for i in range(top+1):
+            if classifier == i:
+                print(classifier, " = ", i)
+
+
+
+    # count the number of right guess in each class from true lables, 
+
+    # recallX =TrueClassX/AllClassX so that is right guesses/ over total number of guesses for each class, this ration goes into a new 
+    # array in the order of the classes class 0 at 0 index etc.
+
+recalls(classifierOutput, trueLabels)
 
 # 3. Write a function called removeOnes that takes in a dataArray (n,2) numpy array and
 # returns a (m,2) numpy array where any row with a 1 in the second row is removed.
