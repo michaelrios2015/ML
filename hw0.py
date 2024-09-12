@@ -66,6 +66,14 @@ print(neighborClassify(featureArray, trainArray))
 # For arbitrary input, you may presume the class labels are 0, 1, ..., n-1, e.g., when n=2, the labels
 # are 0 and 1.
 
+classifierOutput=[0,1,1,0,0,1,1,0,1]
+trueLabels=      [1,1,0,0,0,0,1,1,1]
+
+def recalls(classifierOutput, trueLabels):
+    # so find how many classes there are 
+    
+    # recallX =TrueClassX/AllClassX
+
 
 # 3. Write a function called removeOnes that takes in a dataArray (n,2) numpy array and
 # returns a (m,2) numpy array where any row with a 1 in the second row is removed.
