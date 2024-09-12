@@ -72,22 +72,34 @@ trueLabels=      [1,1,0,0,0,0,1,1,1]
 def recalls(classifierOutput, trueLabels):
     # so find how many classes there are 
     # we are told classes follow 0,1, 
-    # and we assume trues guesses has at least one of last classes..  
-    top = max(trueLabels)
-    print("top ", top)
+    # and we assume trues guesses has at least one of last class..  
+    top = int(max(trueLabels))
+    # print("top ", top)
 
-    # 
-    classes = [0] * top + 1
+    # so we need to count all guesses and right guess of each class
+    #the index will represent the class number
+    classes = [0] * (top + 1)
+    rightGuesses = [0] * (top + 1)
     # count the number of each class guess from classifierOutput
     # so we need to loop through classifierOutput
-    for classifier in classifierOutput:
+    for idx, classifier in enumerate(classifierOutput):
 
-        # seeing which class was guessed
+        # did we guess right 
+        if classifier == trueLabels[idx]:
+            rightGuesses[classifier] =rightGuesses[classifier] + 1  
+
+        # seeing which class was guessed, and counting the total 
         for i in range(top+1):
             if classifier == i:
-                print(classifier, " = ", i)
+                classes[i] = classes[i] + 1
+                # print(classifier, " = ", i)
+  
 
+    print(classes)
+    print(rightGuesses)
 
+    final = np.array(rightGuesses)/np.array(classes)
+    print(final)
 
     # count the number of right guess in each class from true lables, 
 
@@ -105,3 +117,22 @@ recalls(classifierOutput, trueLabels)
 # np.array([[-4,2],[5,0],[3,0], [10,0],[4,0] ,[-2,2]]) into
 # expandedData .
 # This function could be used for removing a class (class 1) not prioritized for learning.
+
+
+dataArray=np.array([[-4,2],[5,0],[3,0],[8,1],[10,0],[4,0],[2,1],[-2,2]])
+
+print(dataArray)
+
+def removeOnes(dataArray):
+
+    # we ar egoing to get the index for all with clas 1
+    ones = []
+
+    
+    for idx, data in enumerate(dataArray):
+        if data[1] == 1:
+            ones.insert(len(ones), idx)
+    print(ones)
+    return(np.delete(dataArray, ones, 0))
+
+print(removeOnes(dataArray))
