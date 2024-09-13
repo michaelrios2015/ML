@@ -66,8 +66,12 @@ def neighborClassify(featureArray, trainArray):
 # For arbitrary input, you may presume the class labels are 0, 1, ..., n-1, e.g., when n=2, the labels
 # are 0 and 1.
 
-classifierOutput=[0,1,1,0,0,1,1,0,1]
-trueLabels=      [1,1,0,0,0,0,1,1,1]
+# classifierOutput=[0,1,1,0,0,1,1,0,1]
+# trueLabels=      [1,1,0,0,0,0,1,1,1]
+
+classifierOutput=[0,0,0,1,2,2,2,7]
+trueLabels=      [0,0,1,1,2,1,1,7]
+
 
 def recalls(classifierOutput, trueLabels):
     # so find how many classes there are 
@@ -99,14 +103,14 @@ def recalls(classifierOutput, trueLabels):
     print(rightGuesses)
 
     final = np.array(rightGuesses)/np.array(classes)
-    print(final)
+    return(final)
 
     # count the number of right guess in each class from true lables, 
 
     # recallX =TrueClassX/AllClassX so that is right guesses/ over total number of guesses for each class, this ration goes into a new 
     # array in the order of the classes class 0 at 0 index etc.
 
-recalls(classifierOutput, trueLabels)
+print(recalls(classifierOutput, trueLabels))
 
 # 3. Write a function called removeOnes that takes in a dataArray (n,2) numpy array and
 # returns a (m,2) numpy array where any row with a 1 in the second row is removed.
@@ -121,7 +125,7 @@ recalls(classifierOutput, trueLabels)
 
 dataArray=np.array([[-4,2],[5,0],[3,0],[8,1],[10,0],[4,0],[2,1],[-2,2]])
 
-print(dataArray)
+# print(dataArray)
 
 def removeOnes(dataArray):
 
@@ -135,4 +139,4 @@ def removeOnes(dataArray):
     print(ones)
     return(np.delete(dataArray, ones, 0))
 
-print(removeOnes(dataArray))
+# print(removeOnes(dataArray))
