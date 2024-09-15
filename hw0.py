@@ -1,6 +1,5 @@
 # 1. Write a function called neighborClassify that takes in a 1D numpy array of numbers
 # (the heights of unknown animals) and a 2D numpy array containing the heights of known
-
 # animals. The function will return a list of 0s and 1s – a 0 for each non-giraffe input and a 1
 # for each giraffe input – using nearest neighbors classification (see below). Specifically, the
 # function call must look like this:
@@ -25,35 +24,36 @@ trainArray = np.array(
 
 def neighborClassify(featureArray, trainArray):
 
+    # where we store our answers
     final = []
 
     for feature in featureArray:
-        print(feature)
 
-        # so we are comparing the features characteristic to the first entry in our training array
-        # we are just going to assume that our feature will be closest to this then we will check the rest of
-        # trainging data to see if we are correct
+        # we just assume that the feature will be closet to the first entry of the trainArray, we will then
+        # check
         minDistance = abs(feature - trainArray[0][0])
         classChoosen = trainArray[0][1]
 
-        # using brute force here, just just use a binary search but I want to get someting and then improve it
+        # using brute force here, ee should use a binary search but I was not sure how much time I had
         for train in trainArray:
-            print(train[0])
-            # see if we get a new mindisy=tance
+            # see if we get a new minDistance, note if we are tied on minDistance
+            # then whichever class appeared first is choosen
             if minDistance > abs(feature - train[0]):
+                # if so switch it
                 minDistance = abs(feature - train[0])
                 classChoosen = train[1]
+        # insert the choosen class into our list of results
         final.insert(len(final), int(classChoosen))
-        # print("minDistance ", minDistance)
-        # print("class ", classChoosen)
-
-    # print(final)
 
     return final
 
 
-# print(neighborClassify(featureArray, trainArray))
+# testing
+print("testing Question 1")
+print(neighborClassify(featureArray, trainArray))
 
+################################################################################################################
+################################################################################################################
 
 # 2. Write a function called recalls that takes in a list of approximated class labels output by
 # the classifier (threshClassify) and a list of true labels provided in the training set, and calculates
@@ -66,50 +66,53 @@ def neighborClassify(featureArray, trainArray):
 # For arbitrary input, you may presume the class labels are 0, 1, ..., n-1, e.g., when n=2, the labels
 # are 0 and 1.
 
-# classifierOutput=[0,1,1,0,0,1,1,0,1]
-# trueLabels=      [1,1,0,0,0,0,1,1,1]
+classifierOutput = [0, 1, 1, 0, 0, 1, 1, 0, 1]
+trueLabels = [1, 1, 0, 0, 0, 0, 1, 1, 1]
 
-classifierOutput=[0,0,0,1,2,2,2,7]
-trueLabels=      [0,0,1,1,2,1,1,7]
+# classifierOutput = [0, 0, 0, 1, 2, 2, 2, 7]
+# trueLabels = [0, 0, 1, 1, 2, 1, 1, 7]
 
 
 def recalls(classifierOutput, trueLabels):
-    # so find how many classes there are 
-    # we are told classes follow 0,1, 
-    # and we assume trues guesses has at least one of last class..  
+    # so find how many classes there are
+    # we are told class labels are 0, 1, ..., n-1,
+    # and we assume trues guesses has at least one of last class, which seems like a safe assumption.
     top = int(max(trueLabels))
     # print("top ", top)
 
     # so we need to count all guesses and right guess of each class
-    #the index will represent the class number
+    # the index will represent the class number
+
+    # all times a class is guessed in classifierOutput
     classes = [0] * (top + 1)
+    # all right guesses of a class in classifierOutput
     rightGuesses = [0] * (top + 1)
+
     # count the number of each class guess from classifierOutput
     # so we need to loop through classifierOutput
     for idx, classifier in enumerate(classifierOutput):
 
-        # did we guess right 
+        # recallX = TrueClassX/AllClassX so that is right guesses/over total number of guesses for each class,
+        # this ration goes into a new array in the order of the classes class 0 at 0 index etc.
+
+        # did we guess right
         if classifier == trueLabels[idx]:
-            rightGuesses[classifier] =rightGuesses[classifier] + 1  
+            # increminate right guesses at that index
+            rightGuesses[classifier] = rightGuesses[classifier] + 1
 
-        # seeing which class was guessed, and counting the total 
-        for i in range(top+1):
-            if classifier == i:
-                classes[i] = classes[i] + 1
-                # print(classifier, " = ", i)
-  
+        # counting the total times a class was guessed
+        classes[classifier] = classes[classifier] + 1
 
-    print(classes)
-    print(rightGuesses)
+    # print(classes)
+    # print(rightGuesses)
 
-    final = np.array(rightGuesses)/np.array(classes)
-    return(final)
+    # if a class is never
+    return np.array(rightGuesses) / np.array(classes)
 
-    # count the number of right guess in each class from true lables, 
+    # count the number of right guess in each class from true lables,
 
-    # recallX =TrueClassX/AllClassX so that is right guesses/ over total number of guesses for each class, this ration goes into a new 
-    # array in the order of the classes class 0 at 0 index etc.
 
+print("testing Question 2")
 print(recalls(classifierOutput, trueLabels))
 
 # 3. Write a function called removeOnes that takes in a dataArray (n,2) numpy array and
@@ -123,20 +126,25 @@ print(recalls(classifierOutput, trueLabels))
 # This function could be used for removing a class (class 1) not prioritized for learning.
 
 
-dataArray=np.array([[-4,2],[5,0],[3,0],[8,1],[10,0],[4,0],[2,1],[-2,2]])
+dataArray = np.array(
+    [[-4, 2], [5, 0], [3, 0], [8, 1], [10, 0], [4, 0], [2, 1], [-2, 2]]
+)
 
 # print(dataArray)
 
+
 def removeOnes(dataArray):
 
-    # we ar egoing to get the index for all with clas 1
+    # we ar egoing to get the index for all entries with class 1
     ones = []
 
-    
     for idx, data in enumerate(dataArray):
         if data[1] == 1:
             ones.insert(len(ones), idx)
-    print(ones)
-    return(np.delete(dataArray, ones, 0))
+    # print(ones)
+    # Now we can just tell it which enties to delete
+    return np.delete(dataArray, ones, 0)
 
-# print(removeOnes(dataArray))
+
+print("testing question 3")
+print(removeOnes(dataArray))
