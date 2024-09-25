@@ -84,23 +84,46 @@ def learnParams(data):
     # yes we find a different set of params for each class
 
     # and then return those in an array based on class number and index
-    print("jello")
+    # print("jello")
+
+    num_classes = data[:, 0]
+    # print(print(num_classes))
+    top = int(max(num_classes)) + 1
+    # print("top =", top)
+
+    classes = [0] * int(top)
+    # print(classes)
+    classes = np.array(classes)
+    features = [[0.0, 0.0]] * int(top)
+    features = np.array(features)
+    # print(features[1, 1])
+
+    for a in data:
+        classes[int(a[0])] = classes[int(a[0])] + 1
+        # print(a[1])
+        features[int(a[0]), 0] = features[int(a[0]), 0] + a[1]
+        features[int(a[0]), 1] = features[int(a[0]), 1] + a[2]
+
+    # print(classes)
+    # print(features)
+
+    return classes / features
+
+    # lambda = number of times a class is seen / sum of all the observations for that feature
 
 
-    # lambda = number of times a class is seen / sum of all the observations for that feature 
-
-    
-
-learnParams(
-    np.array(
-        [
-            [0, 0.5, 200],
-            [1, 0.7, 130],
-            [0, 0.2, 100],
-            [1, 2, 10],
-            [0, 1.5, 50],
-            [1, 4, 20],
-        ]
+print(
+    learnParams(
+        np.array(
+            [
+                [0, 0.5, 200],
+                [1, 0.7, 130],
+                [0, 0.2, 100],
+                [1, 2, 10],
+                [0, 1.5, 50],
+                [1, 4, 20],
+            ]
+        )
     )
 )
 
@@ -194,8 +217,18 @@ print(
 # I assume once I have 2 and three down this will not be so hard.. but maybe
 
 
-def labelBayes(birdFeats,params,priors):
+def labelBayes(birdFeats, params, priors):
 
     # so we need a formula again
 
-    # and then for each bird in bird feature we take that forula 
+    # and then for each bird in bird feature we take that forula
+    print("hola!!")
+
+    # probabilty of feature 1, with expontial  * feature 2 times prior
+
+
+labelBayes(
+    np.array([[0.5, 5], [0.5, 2], [2, 8]]),
+    np.array([[0.7, 0.2], [0.4, 0.1]]),
+    np.array([0.4, 0.6]),
+)
