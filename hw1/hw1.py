@@ -9,13 +9,13 @@ import matplotlib.pyplot as plt
 # the graph stuff hopefully done riht
 #
 ################################################################
-# 1. Inspect the distribution of the speed feature for each class and determine if it follows a
-# SO I believe I need to make three arrays, one for each bird that only contains their speed
-#
-# Then see if it looks like
-# Gaussian or  Exponential or a Uniform
-#  Record this result as a comment in hw1.py .
-# so I have forgotten how the hsiotogram works
+# # 1. Inspect the distribution of the speed feature for each class and determine if it follows a
+# # SO I believe I need to make three arrays, one for each bird that only contains their speed
+# #
+# # Then see if it looks like
+# # Gaussian or  Exponential or a Uniform
+# #  Record this result as a comment in hw1.py .
+# # so I have forgotten how the hsiotogram works
 
 # dataIn = pd.read_csv("hw1\hw1Data.csv")
 # dataNP = dataIn.to_numpy()
@@ -25,6 +25,7 @@ import matplotlib.pyplot as plt
 # sparrow = []
 # raven = []
 
+# # I think there is a much easier way to do this, but I am new to NP arrays
 # for data in dataNP:
 #     if data[0] == 0:
 #         finch.insert(len(finch), data[1])
@@ -41,22 +42,33 @@ import matplotlib.pyplot as plt
 # raven = np.array(raven)
 
 
-# print(finch)
-# print(duck)
-# print(sparrow)
-# print(raven)
+# # print(finch)
+# # print(duck)
+# # print(sparrow)
+# # print(raven)
+
+# #################################################################
+#
+# #ANSWER FOR QUESTION 1
+#
+# ##################################################################
+
 
 # plt.hist(finch)
 # plt.show()
+# # EXPONENTIAL!!!!!
 
 # plt.hist(duck)
 # plt.show()
+# # going to say CONTINOUS
 
 # plt.hist(sparrow)
 # plt.show()
+# # GAUSSIAN!!!
 
 # plt.hist(raven)
 # plt.show()
+# # EXPONENTIAL!!!!!
 
 
 ########################################################################
@@ -80,37 +92,39 @@ import matplotlib.pyplot as plt
 
 def learnParams(data):
 
-    # so we need a formula for lambda, is it what we used for the HW??? that seems like it makes the most sense
+    # so we need a formula for lambda
+    # used ln and then the derivative to get the formula for lambda
+    # lambda = number of times a class is seen / sum of all the observations for that feature
 
-    # yes we find a different set of params for each class
+    # We find a different lambda for each class
 
     # and then return those in an array based on class number and index
-    # print("jello")
 
+    # find out how many classes we have but looking at the class list and assuming the highest number is the hightest class
     num_classes = data[:, 0]
     # print(print(num_classes))
     top = int(max(num_classes)) + 1
     # print("top =", top)
 
+    # these are two arrays both the length or our number of classes
+    # this holds a count of how many times a class is seen
     classes = [0] * int(top)
-    # print(classes)
     classes = np.array(classes)
+
+    # this will hold the returned lambdas
     features = [[0.0, 0.0]] * int(top)
     features = np.array(features)
     # print(features[1, 1])
 
+    # the clculations are pretty simple
     for a in data:
         classes[int(a[0])] = classes[int(a[0])] + 1
         # print(a[1])
         features[int(a[0]), 0] = features[int(a[0]), 0] + a[1]
         features[int(a[0]), 1] = features[int(a[0]), 1] + a[2]
 
-    # print(classes)
-    # print(features)
-
+    # vector math takes care of the return values :)
     return classes / features
-
-    # lambda = number of times a class is seen / sum of all the observations for that feature
 
 
 print(
@@ -176,7 +190,7 @@ def learnPriors(data):
         # print(i)
         final[int(i)] = final[int(i)] + 1
 
-    # finally we divide each class by the total size and those are our priors
+    # finally we divide each class by the total size and those are our priors, at least I hope so
     return np.array(final) / size
 
 
@@ -215,7 +229,7 @@ print(
 #  np.array([0.4,0.6]))
 # would return np.array([0,0,1])
 
-# I assume once I have 2 and three down this will not be so hard.. but maybe
+# the formual for expontial distubtion
 
 
 def exp_dist(lamb, x):
@@ -230,8 +244,7 @@ def labelBayes(birdFeats, params, priors):
     # so if I undertood how to use vector math, and specifically vector math in pthon I might not need to use these for loops
     # right now I do, but hopefully I will learn the more efecient way :)
     for feat in birdFeats:
-
-        # so we set the intial winner to zero and zero, so our very first run should beat thatm the winner variable may not change
+        # so we set the intial winner to zero and zero, so our very first run should beat that, the winner variable will not change
         # but that is fine
         pmax = 0
         winner = 0
