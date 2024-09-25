@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import math as m
 
 import matplotlib.pyplot as plt
 
@@ -217,18 +218,58 @@ print(
 # I assume once I have 2 and three down this will not be so hard.. but maybe
 
 
+def exp_dist(lamb, x):
+    return lamb / (m.e ** (lamb * x))
+
+
 def labelBayes(birdFeats, params, priors):
 
-    # so we need a formula again
+    # for storing the winning class
+    final = []
 
-    # and then for each bird in bird feature we take that forula
-    print("hola!!")
+    # so if I undertood how to use vector math, and specifically vector math in pthon I might not need to use these for loops
+    # right now I do, but hopefully I will learn the more efecient way :)
+    for feat in birdFeats:
 
-    # probabilty of feature 1, with expontial  * feature 2 times prior
+        # so we set the intial winner to zero and zero, so our very first run should beat thatm the winner variable may not change
+        # but that is fine
+        pmax = 0
+        winner = 0
+
+        # then we have however many classes of birds, which is the length of params and priors
+        for idx, param in enumerate(params):
+            # then we apply the the params to each class and see which class is the biggest, we do not know how many classes but we only have two features
+
+            # probability of class given first param and first feature measurment
+            p1 = exp_dist(param[0], feat[0])
+
+            # probability of class given 2nd param and 2nd feature measurment
+            p2 = exp_dist(param[1], feat[1])
+
+            # probabilties multipled with prior to get naive bayes
+            ptotal = p1 * p2 * priors[idx]
+            # if this total probablitly is bigger than the previous one make it the new pmax and remeber which class(winner) it is
+            if ptotal > pmax:
+                pmax = ptotal
+                winner = idx
+
+        # insert the winning class into our final array
+        final.insert(len(final), winner)
+
+    return np.array(final)
 
 
-labelBayes(
-    np.array([[0.5, 5], [0.5, 2], [2, 8]]),
-    np.array([[0.7, 0.2], [0.4, 0.1]]),
-    np.array([0.4, 0.6]),
+print(
+    labelBayes(
+        np.array([[0.5, 5], [0.5, 2], [2, 8]]),
+        np.array([[0.7, 0.2], [0.4, 0.1]]),
+        np.array([0.4, 0.6]),
+    )
 )
+
+
+# birdFeats so this is teh speed and chipr thing, have as many as we have birds
+
+# params the parameters lambda for the speed for class i and params[i,1]
+# is the lambda for the chirp delay of class i. so for each bird fgeature I need to go through this and see which give me the maxium
+# but also tie in the priors, these are as many as we have classes of birds so probably different from bordfeatures
