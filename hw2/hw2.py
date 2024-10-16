@@ -161,20 +161,32 @@ def learnLam(dataTrain, iters):
     n = len(dataTrain[0]) - 1
     # set w to all zeros
     w = np.zeros(n)
-    lam = 1
+    lams = np.ones(n)
+
+    print(lams)
+    # splitting data it features and labels
+    labels = dataTrain[:][:, -1]
+    dataSet = dataTrain[:, 0:-1]
+    # print("labels")
+    # print(dataSet)
+
+    # print(labels)
+    # w = computeW(lams, labels, dataSet)
+
+    print(w)
 
     # our number of intervals
-    for i in range(0, iters):
+    # for i in range(0, iters):
 
-        # loopsing throught datatrain
-        for j in range(0, len(dataTrain)):
+    #     # loopsing throught datatrain
+    #     for j in range(0, len(dataTrain)):
 
-            # class 1
-            if dataTrain[j][-1] == 1:
-                print(dataTrain[j][:-1])
-            # class -1
-            else:
-                print(dataTrain[j][:-1])
+    #         # class 1
+    #         if dataTrain[j][-1] == 1:
+    #             print(dataTrain[j][:-1])
+    #         # class -1
+    #         else:
+    #             print(dataTrain[j][:-1])
 
 
 learnLam(dataTrain, iters)
