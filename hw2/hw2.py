@@ -171,9 +171,10 @@ def learnLam(dataTrain, iters):
     # print(dataSet)
 
     # print(labels)
+
     # w = computeW(lams, labels, dataSet)
 
-    print(w)
+    # print(w)
 
     # our number of intervals
     # for i in range(0, iters):
