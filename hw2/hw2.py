@@ -154,15 +154,15 @@ def computeW(alphas, labels, dataSet):
 #     ]
 # )
 
-iters = 10
+iters = 40
 
 # so w goies yo [1,1] loss goes to zero ... so seems to be working
 # the answer is oddly large but is essentially [1,1]
 # but the lamtotal is huge, what is going on
 dataTrain = np.array(
     [
-        [12, 2, 1],
-        [2, 12, -1],
+        [4, 2, 1],
+        [2, 4, -1],
     ]
 )
 
