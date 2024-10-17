@@ -144,85 +144,113 @@ def computeW(alphas, labels, dataSet):
 
 # this uses the dataSet....looks really complex hopefully not
 
+
+#  does not work with this... gets to zero loss but seems all wrong
 # dataTrain = np.array(
 #     [
 #         [-3.5, -1, -3, 1, 0.5, 2, 1],
-#         [-1.5, -0.5, -4, -1, 0, 3, 1],
+#         # [-1.5, -0.5, -4, -1, 0, 3, 1],
 #         [3, 0, 4, 0, 0.5, 0.0, -1],
 #     ]
 # )
 
-iters = 11
+iters = 10
 
-dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
+# so w goies yo [1,1] loss goes to zero ... so seems to be working
+# the answer is oddly large but is essentially [1,1]
+# but the lamtotal is huge, what is going on
+dataTrain = np.array(
+    [
+        [12, 2, 1],
+        [2, 12, -1],
+    ]
+)
 
-dataTrain = np.delete(dataTrain, 0, axis=1)
 
-print(len(dataTrain))
-print(dataTrain[3])
+# dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
+
+# dataTrain = np.delete(dataTrain, 0, axis=1)
+
+# print(len(dataTrain))
+# print(dataTrain[3])
 
 
-dataTrain[dataTrain[:, 10] == 0, 10] = -1
+# dataTrain[dataTrain[:, 10] == 0, 10] = -1
 
+# # dataTrain = dataTrain[:100]
 
-print(dataTrain[3])
+# print(dataTrain[3])
 
 
 def learnLam(dataTrain, iters):
 
-    # need to know vector size
+    # need toi know how many features
     n = len(dataTrain[0]) - 1
-    # Intialize w, lambdas, epsilon and an array for change in lan
+    # Intialize w to all zeros,
     w = np.zeros(n)
+    # lambdas to all 1s
     lams = np.ones(len(dataTrain))
     # print(lams)
+    # epsilon to 0.01
     epsilon = 0.01
+    # this will hold the change in lambda
     changeLam = np.zeros((len(dataTrain)))
 
     # splitting data it features and labels
     labels = dataTrain[:][:, -1]
     dataSet = dataTrain[:, 0:-1]
-    # print("labels")
-    # print(dataSet)
-    # print(labels)
 
-    # our number of intervals
+    # our loop for intervals
     for i in range(0, iters):
 
-        # loopsing throught datatrain to get argmax lam argmin w
+        # maxmin always starts at zero
         maxmin = 0
+        # add lambda total as in theory it should go to zero
+        lamTot = 0
+        # loopong through the feature
         for j in range(0, len(dataSet)):
 
+            # print(maxmin)
             # this is also formula for change in lambda and argmax lam argmin w
             temp = 1 - labels[j] * (np.dot(w, dataSet[j]))
             # adding them all up
             maxmin += temp
-            # seems to be what we do in the lecture 3
-            # so I can just update lambdas here
-            changeLam[j] = epsilon * temp
-            # if lams[j] - epsilon * temp >= 0:
-            #     lams[j] = lams[j] - epsilon * temp
-            # else:
-            #     lams[j] = 0
 
+            # getting the change in lambda
+            changeLam[j] = epsilon * temp
+
+            # updating our lambda but never going below zero
+            if lams[j] - changeLam[j] >= 0:
+                lams[j] = lams[j] - changeLam[j]
+            else:
+                lams[j] = 0
+
+            # I just wanted to keep trak of this
+            lamTot += lams[j] * labels[j]
         # addding w tranpose w to maxmin to get loss
-        print("lambdas")
-        print(lams)
+
+        print("lamTot")
+        print(lamTot)
+        # last part of calculating loss
         loss = np.dot(w, w) + maxmin
         print("loss")
         print(loss)
+
+        print("lambdas")
+        print(lams)
         # print(changeLam)
 
         # compute new w... but when
         w = computeW(lams, labels, dataSet)
         print("w")
         print(w)
+        print("--------------------------")
 
-        for i in range(0, len(lams)):
-            if lams[i] - changeLam[i] >= 0:
-                lams[j] = lams[i] - changeLam[i]
-            else:
-                lams[j] = 0
+        # for i in range(0, len(lams)):
+        #     if lams[i] - changeLam[i] >= 0:
+        #         lams[j] = lams[i] - changeLam[i]
+        #     else:
+        #         lams[j] = 0
 
 
 learnLam(dataTrain, iters)
