@@ -144,50 +144,85 @@ def computeW(alphas, labels, dataSet):
 
 # this uses the dataSet....looks really complex hopefully not
 
-dataTrain = np.array(
-    [
-        [-3.5, -1, -3, 1, 0.5, 2, 1],
-        [-1.5, -0.5, -4, -1, 0, 3, 1],
-        [3, 0, 4, 0, 0.5, 0.0, -1],
-    ]
-)
+# dataTrain = np.array(
+#     [
+#         [-3.5, -1, -3, 1, 0.5, 2, 1],
+#         [-1.5, -0.5, -4, -1, 0, 3, 1],
+#         [3, 0, 4, 0, 0.5, 0.0, -1],
+#     ]
+# )
 
-iters = 1
+iters = 11
+
+dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
+
+dataTrain = np.delete(dataTrain, 0, axis=1)
+
+print(len(dataTrain))
+print(dataTrain[3])
+
+
+dataTrain[dataTrain[:, 10] == 0, 10] = -1
+
+
+print(dataTrain[3])
 
 
 def learnLam(dataTrain, iters):
 
     # need to know vector size
     n = len(dataTrain[0]) - 1
-    # set w to all zeros
+    # Intialize w, lambdas, epsilon and an array for change in lan
     w = np.zeros(n)
-    lams = np.ones(n)
+    lams = np.ones(len(dataTrain))
+    # print(lams)
+    epsilon = 0.01
+    changeLam = np.zeros((len(dataTrain)))
 
-    print(lams)
     # splitting data it features and labels
     labels = dataTrain[:][:, -1]
     dataSet = dataTrain[:, 0:-1]
     # print("labels")
     # print(dataSet)
-
     # print(labels)
 
-    # w = computeW(lams, labels, dataSet)
-
-    # print(w)
-
     # our number of intervals
-    # for i in range(0, iters):
+    for i in range(0, iters):
 
-    #     # loopsing throught datatrain
-    #     for j in range(0, len(dataTrain)):
+        # loopsing throught datatrain to get argmax lam argmin w
+        maxmin = 0
+        for j in range(0, len(dataSet)):
 
-    #         # class 1
-    #         if dataTrain[j][-1] == 1:
-    #             print(dataTrain[j][:-1])
-    #         # class -1
-    #         else:
-    #             print(dataTrain[j][:-1])
+            # this is also formula for change in lambda and argmax lam argmin w
+            temp = 1 - labels[j] * (np.dot(w, dataSet[j]))
+            # adding them all up
+            maxmin += temp
+            # seems to be what we do in the lecture 3
+            # so I can just update lambdas here
+            changeLam[j] = epsilon * temp
+            # if lams[j] - epsilon * temp >= 0:
+            #     lams[j] = lams[j] - epsilon * temp
+            # else:
+            #     lams[j] = 0
+
+        # addding w tranpose w to maxmin to get loss
+        print("lambdas")
+        print(lams)
+        loss = np.dot(w, w) + maxmin
+        print("loss")
+        print(loss)
+        # print(changeLam)
+
+        # compute new w... but when
+        w = computeW(lams, labels, dataSet)
+        print("w")
+        print(w)
+
+        for i in range(0, len(lams)):
+            if lams[i] - changeLam[i] >= 0:
+                lams[j] = lams[i] - changeLam[i]
+            else:
+                lams[j] = 0
 
 
 learnLam(dataTrain, iters)
