@@ -149,12 +149,12 @@ def computeW(alphas, labels, dataSet):
 # dataTrain = np.array(
 #     [
 #         [-3.5, -1, -3, 1, 0.5, 2, 1],
-#         # [-1.5, -0.5, -4, -1, 0, 3, 1],
+#         [-1.5, -0.5, -4, -1, 0, 3, 1],
 #         [3, 0, 4, 0, 0.5, 0.0, -1],
 #     ]
 # )
 
-iters = 40
+iters = 15
 
 # so w goies yo [1,1] loss goes to zero ... so seems to be working
 # the answer is oddly large but is essentially [1,1]
@@ -200,6 +200,8 @@ def learnLam(dataTrain, iters):
     labels = dataTrain[:][:, -1]
     dataSet = dataTrain[:, 0:-1]
 
+    # intializing b as zero
+    b = 0
     # our loop for intervals
     for i in range(0, iters):
 
@@ -207,12 +209,12 @@ def learnLam(dataTrain, iters):
         maxmin = 0
         # add lambda total as in theory it should go to zero
         lamTot = 0
+
         # loopong through the feature
         for j in range(0, len(dataSet)):
 
-            # print(maxmin)
             # this is also formula for change in lambda and argmax lam argmin w
-            temp = 1 - labels[j] * (np.dot(w, dataSet[j]))
+            temp = 1 - labels[j] * (np.dot(w, dataSet[j]) + b)
             # adding them all up
             maxmin += temp
 
@@ -220,14 +222,19 @@ def learnLam(dataTrain, iters):
             changeLam[j] = epsilon * temp
 
             # updating our lambda but never going below zero
-            if lams[j] - changeLam[j] >= 0:
+            if lams[j] - changeLam[j] >= 0.001:
                 lams[j] = lams[j] - changeLam[j]
             else:
                 lams[j] = 0
 
             # I just wanted to keep trak of this
             lamTot += lams[j] * labels[j]
-        # addding w tranpose w to maxmin to get loss
+            # addding w tranpose w to maxmin to get loss
+
+        # recalculating b
+        b = -(temp) / 2
+        print("b")
+        print(b)
 
         print("lamTot")
         print(lamTot)
