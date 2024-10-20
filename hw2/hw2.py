@@ -1,5 +1,6 @@
 import scipy.io
 import numpy as np
+import matplotlib.pyplot as plt
 
 # looking at the data
 mat = scipy.io.loadmat("hw2\hw2data.mat")
@@ -154,44 +155,44 @@ def computeW(alphas, labels, dataSet):
 #     ]
 # )
 
-iters = 15
-
+iters = 20
 # so w goies yo [1,1] loss goes to zero ... so seems to be working
 # the answer is oddly large but is essentially [1,1]
 # but the lamtotal is huge, what is going on
-dataTrain = np.array(
-    [
-        [4, 2, 1],
-        [2, 4, -1],
-    ]
-)
+# dataTrain = np.array(
+#     [
+#         [4, 2, 1],
+#         [2, 4, -1],
+#     ]
+# )
 
 
-# dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
+dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
 
-# dataTrain = np.delete(dataTrain, 0, axis=1)
+dataTrain = np.delete(dataTrain, 0, axis=1)
 
 # print(len(dataTrain))
 # print(dataTrain[3])
 
+# convert 0 to -1
+dataTrain[dataTrain[:, 10] == 0, 10] = -1
 
-# dataTrain[dataTrain[:, 10] == 0, 10] = -1
-
-# # dataTrain = dataTrain[:100]
+# getting 60
+dataTrain = dataTrain[:60]
 
 # print(dataTrain[3])
 
 
 def learnLam(dataTrain, iters):
 
-    # need toi know how many features
+    # need to know how many features
     n = len(dataTrain[0]) - 1
     # Intialize w to all zeros,
     w = np.zeros(n)
-    # lambdas to all 1s
+    # lambdas to all 1s, one lambda for each xi
     lams = np.ones(len(dataTrain))
     # print(lams)
-    # epsilon to 0.01
+    # Making epilison really small becuase it seem to crash otherwhise
     epsilon = 0.01
     # this will hold the change in lambda
     changeLam = np.zeros((len(dataTrain)))
@@ -199,29 +200,59 @@ def learnLam(dataTrain, iters):
     # splitting data it features and labels
     labels = dataTrain[:][:, -1]
     dataSet = dataTrain[:, 0:-1]
+    # print(labels)
+    # print(dataSet)
 
+    # putting losses in here
+    losses = []
     # intializing b as zero
     b = 0
     # our loop for intervals
+
     for i in range(0, iters):
 
         # maxmin always starts at zero
         maxmin = 0
-        # add lambda total as in theory it should go to zero
+        # add lambda total this was just for me wanted to see if it went to zero
         lamTot = 0
 
-        # loopong through the feature
+        # for b
+        large = []
+        small = []
+        # going to try to get b largest dot product for a datapoint in yi=-1 and the smallest dot product for a datapoint in yi=+1
+        for k in range(0, len(dataSet)):
+
+            # so just going through each class and w transform xi
+            if labels[k] == 1:
+                # puuting them all in an arry so I can get max or min... probably a
+                # better way to do this but it should work
+                small.append(np.dot(w, dataSet[k]))
+            else:
+                large.append(np.dot(w, dataSet[k]))
+
+        # print("small")
+        # print(small)
+        small = np.array(small)
+        large = np.array(large)
+
+        # hopefully the correct formula for b
+        b = -(large.min() + small.max()) / 2
+
+        # looping through the features again
         for j in range(0, len(dataSet)):
 
             # this is also formula for change in lambda and argmax lam argmin w
             temp = 1 - labels[j] * (np.dot(w, dataSet[j]) + b)
-            # adding them all up
+            # adding them all up for our argmax lambda argmin w
             maxmin += temp
 
-            # getting the change in lambda
+            # getting the change in lambda i
             changeLam[j] = epsilon * temp
 
             # updating our lambda but never going below zero
+            # made it .001 because I some lambada numbers seemed to go very high and i was worried
+            # the arthmetic might get dicey... no cluie if it is really needed but wanted to give it
+            # a shot
             if lams[j] - changeLam[j] >= 0.001:
                 lams[j] = lams[j] - changeLam[j]
             else:
@@ -231,33 +262,61 @@ def learnLam(dataTrain, iters):
             lamTot += lams[j] * labels[j]
             # addding w tranpose w to maxmin to get loss
 
-        # recalculating b
-        b = -(temp) / 2
-        print("b")
-        print(b)
+        # a bunch of print functions I was using to check
+        # print("b")
+        # print(b)
 
-        print("lamTot")
-        print(lamTot)
+        # print("lamTot")
+        # print(lamTot)
         # last part of calculating loss
         loss = np.dot(w, w) + maxmin
-        print("loss")
-        print(loss)
+        # put loss in losses array
+        losses.append(loss)
+        # print("losses")
+        # print(losses)
 
-        print("lambdas")
-        print(lams)
+        # print("lambdas")
+        # print(lams)
         # print(changeLam)
 
-        # compute new w... but when
+        # compute new w I think this order is correct but maybe I should I have done this before the
+        # lambdas
         w = computeW(lams, labels, dataSet)
-        print("w")
-        print(w)
-        print("--------------------------")
+        # print("w")
+        # print(w)
+        # print("--------------------------")
 
-        # for i in range(0, len(lams)):
-        #     if lams[i] - changeLam[i] >= 0:
-        #         lams[j] = lams[i] - changeLam[i]
-        #     else:
-        #         lams[j] = 0
+    return (lams, float(b), np.array(losses))
 
 
-learnLam(dataTrain, iters)
+# learnLam(dataTrain, iters)
+
+lams, b, losses = learnLam(dataTrain, iters)
+
+print("lambdas")
+print(lams)
+
+print("b")
+print(b)
+
+print("loss")
+print(losses)
+
+print(
+    int(losses[9]),
+    int(losses[19]),
+    int(losses[29]),
+    int(losses[39]),
+)
+
+xpoints = np.array([10, 20, 30, 40])
+# ypoints = [10, 20, 25, 30]
+ypoints = [
+    int(losses[9]),
+    int(losses[19]),
+    int(losses[29]),
+    int(losses[39]),
+]
+
+plt.plot(xpoints, ypoints)
+plt.show()
