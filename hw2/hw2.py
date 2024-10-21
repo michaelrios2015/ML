@@ -1,6 +1,6 @@
 import scipy.io
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 # looking at the data
 mat = scipy.io.loadmat("hw2\hw2data.mat")
@@ -254,8 +254,8 @@ def learnLam(dataTrain, iters):
             # made it .001 because I some lambada numbers seemed to go very high and i was worried
             # the arthmetic might get dicey... no cluie if it is really needed but wanted to give it
             # a shot
-            if lams[j] - changeLam[j] >= 0:
-                lams[j] = lams[j] - changeLam[j]
+            if lams[j] + changeLam[j] >= 0:
+                lams[j] = lams[j] + changeLam[j]
             else:
                 lams[j] = 0
 
