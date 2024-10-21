@@ -237,7 +237,7 @@ def learnLam(dataTrain, iters):
         large = np.array(large)
 
         # hopefully the correct formula for b
-        b = -(large.min() + small.max()) / 2
+        b = -(large.max() + small.min()) / 2
 
         # looping through the features again
         for j in range(0, len(dataSet)):
@@ -254,7 +254,7 @@ def learnLam(dataTrain, iters):
             # made it .001 because I some lambada numbers seemed to go very high and i was worried
             # the arthmetic might get dicey... no cluie if it is really needed but wanted to give it
             # a shot
-            if lams[j] - changeLam[j] >= 0.001:
+            if lams[j] - changeLam[j] >= 0:
                 lams[j] = lams[j] - changeLam[j]
             else:
                 lams[j] = 0
