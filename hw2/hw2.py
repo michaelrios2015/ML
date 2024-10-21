@@ -169,6 +169,7 @@ iters = 20
 
 dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
 
+# deleteing the first column which just seems to be the index
 dataTrain = np.delete(dataTrain, 0, axis=1)
 
 # print(len(dataTrain))
@@ -302,21 +303,30 @@ print(b)
 print("loss")
 print(losses)
 
-print(
-    int(losses[9]),
-    int(losses[19]),
-    int(losses[29]),
-    int(losses[39]),
-)
+# 4. Use matplotlib.pyplot.plot() to confirm your loss function decreases with
+# more epochs when run on fullData. Specifically, list the (approximate) loss at epoch
+# 10, 20, 30, and 40 as a comment in your .py file submission.
 
-xpoints = np.array([10, 20, 30, 40])
-# ypoints = [10, 20, 25, 30]
-ypoints = [
-    int(losses[9]),
-    int(losses[19]),
-    int(losses[29]),
-    int(losses[39]),
-]
+# print("loses")
+# print(
+#     int(losses[9]),
+#     int(losses[19]),
+#     int(losses[29]),
+#     int(losses[39]),
+# )
 
-plt.plot(xpoints, ypoints)
-plt.show()
+# xpoints = np.array([10, 20, 30, 40])
+# # ypoints = [10, 20, 25, 30]
+# ypoints = [
+#     int(losses[9]),
+#     int(losses[19]),
+#     int(losses[29]),
+#     int(losses[39]),
+# ]
+
+# plt.plot(xpoints, ypoints)
+# plt.show()
+
+
+# loses with 40 iterations and epsilon at 0.000001, something is clearly going wrong
+# 2242 2247 2256 2270
