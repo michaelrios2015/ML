@@ -108,9 +108,9 @@ def computeW(alphas, labels, dataSet):
     # loop through all of them
     for i in range(0, len(dataSet)):
         # mutiple vector by alpha and label
-        dataSet[i] = alphas[i] * labels[i] * dataSet[i]
+        temp = alphas[i] * labels[i] * dataSet[i]
         # add to total
-        total = total + dataSet[i]
+        total = total + temp
 
     return total
 
@@ -156,35 +156,35 @@ def computeW(alphas, labels, dataSet):
 #     ]
 # )
 
-iters = 10
+iters = 40
 # so w goies yo [1,1] loss goes to zero ... so seems to be working
 # the answer is oddly large but is essentially [1,1]
 # but the lamtotal is huge, what is going on
-dataTrain = np.array(
-    [
-        [2, 4, 1],
-        [4, 8, 1],
-        [2, 1, -1],
-        [4, 2, -1],
-    ]
-)
+# dataTrain = np.array(
+#     [
+#         [2, 4, 1],
+#         [4, 8, 1],
+#         [2, 1, -1],
+#         [4, 2, -1],
+#     ]
+# )
 
 
-# dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
+dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
 
-# # deleteing the first column which just seems to be the index
-# dataTrain = np.delete(dataTrain, 0, axis=1)
+# deleteing the first column which just seems to be the index
+dataTrain = np.delete(dataTrain, 0, axis=1)
 
-# # print(len(dataTrain))
-# # print(dataTrain[3])
+# print(len(dataTrain))
+# print(dataTrain[3])
 
-# # convert 0 to -1
-# dataTrain[dataTrain[:, 10] == 0, 10] = -1
+# convert 0 to -1
+dataTrain[dataTrain[:, 10] == 0, 10] = -1
 
-# # getting 60
-# dataTrain = dataTrain[:60]
+# getting 60
+dataTrain = dataTrain[:60]
 
-# # print(dataTrain[3])
+# print(dataTrain[3])
 
 
 def learnLam(dataTrain, iters):
@@ -228,25 +228,25 @@ def learnLam(dataTrain, iters):
         # for b
         large = []
         small = []
-        # # going to try to get b largest dot product for a datapoint in yi=-1 and the smallest dot product for a datapoint in yi=+1
-        # for k in range(0, len(dataSet)):
+        # going to try to get b largest dot product for a datapoint in yi=-1 and the smallest dot product for a datapoint in yi=+1
+        for k in range(0, len(dataSet)):
 
-        #     # so just going through each class and w transform xi
-        #     if labels[k] == 1:
-        #         # puuting them all in an arry so I can get max or min... probably a
-        #         # better way to do this but it should work
-        #         small.append(np.dot(w, dataSet[k]))
-        #     # our -1 labels
-        #     else:
-        #         large.append(np.dot(w, dataSet[k]))
+            # so just going through each class and w transform xi
+            if labels[k] == 1:
+                # puuting them all in an arry so I can get max or min... probably a
+                # better way to do this but it should work
+                small.append(np.dot(w, dataSet[k]))
+            # our -1 labels
+            else:
+                large.append(np.dot(w, dataSet[k]))
 
-        # # print("small")
-        # # print(small)
-        # small = np.array(small)
-        # large = np.array(large)
+        # print("small")
+        # print(small)
+        small = np.array(small)
+        large = np.array(large)
 
-        # # hopefully the correct formula for b
-        # b = -(large.max() + small.min()) / 2
+        # hopefully the correct formula for b
+        b = -(large.max() + small.min()) / 2
 
         w = computeW(lams, labels, dataSet)
         print("w")
