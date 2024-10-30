@@ -1,5 +1,6 @@
 import scipy.io
 import numpy as np
+
 # import matplotlib.pyplot as plt
 
 # looking at the data
@@ -155,33 +156,35 @@ def computeW(alphas, labels, dataSet):
 #     ]
 # )
 
-iters = 20
+iters = 10
 # so w goies yo [1,1] loss goes to zero ... so seems to be working
 # the answer is oddly large but is essentially [1,1]
 # but the lamtotal is huge, what is going on
-# dataTrain = np.array(
-#     [
-#         [4, 2, 1],
-#         [2, 4, -1],
-#     ]
-# )
+dataTrain = np.array(
+    [
+        [2, 4, 1],
+        [4, 8, 1],
+        [2, 1, -1],
+        [4, 2, -1],
+    ]
+)
 
 
-dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
+# dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
 
-# deleteing the first column which just seems to be the index
-dataTrain = np.delete(dataTrain, 0, axis=1)
+# # deleteing the first column which just seems to be the index
+# dataTrain = np.delete(dataTrain, 0, axis=1)
 
-# print(len(dataTrain))
-# print(dataTrain[3])
+# # print(len(dataTrain))
+# # print(dataTrain[3])
 
-# convert 0 to -1
-dataTrain[dataTrain[:, 10] == 0, 10] = -1
+# # convert 0 to -1
+# dataTrain[dataTrain[:, 10] == 0, 10] = -1
 
-# getting 60
-dataTrain = dataTrain[:60]
+# # getting 60
+# dataTrain = dataTrain[:60]
 
-# print(dataTrain[3])
+# # print(dataTrain[3])
 
 
 def learnLam(dataTrain, iters):
@@ -190,9 +193,14 @@ def learnLam(dataTrain, iters):
     n = len(dataTrain[0]) - 1
     # Intialize w to all zeros,
     w = np.zeros(n)
+    # w = np.random.randint(-1, 1, (n))
+    # w = np.random.uniform(low=0.0, high=1.0, size=n)
+    print(w)
     # lambdas to all 1s, one lambda for each xi
+    # lams = np.full(len(dataTrain), 0.5)
     lams = np.ones(len(dataTrain))
-    # print(lams)
+    print(lams)
+
     # Making epilison really small becuase it seem to crash otherwhise
     epsilon = 0.01
     # this will hold the change in lambda
@@ -201,8 +209,8 @@ def learnLam(dataTrain, iters):
     # splitting data it features and labels
     labels = dataTrain[:][:, -1]
     dataSet = dataTrain[:, 0:-1]
-    # print(labels)
-    # print(dataSet)
+    print(labels)
+    print(dataSet)
 
     # putting losses in here
     losses = []
@@ -220,32 +228,38 @@ def learnLam(dataTrain, iters):
         # for b
         large = []
         small = []
-        # going to try to get b largest dot product for a datapoint in yi=-1 and the smallest dot product for a datapoint in yi=+1
-        for k in range(0, len(dataSet)):
+        # # going to try to get b largest dot product for a datapoint in yi=-1 and the smallest dot product for a datapoint in yi=+1
+        # for k in range(0, len(dataSet)):
 
-            # so just going through each class and w transform xi
-            if labels[k] == 1:
-                # puuting them all in an arry so I can get max or min... probably a
-                # better way to do this but it should work
-                small.append(np.dot(w, dataSet[k]))
-            else:
-                large.append(np.dot(w, dataSet[k]))
+        #     # so just going through each class and w transform xi
+        #     if labels[k] == 1:
+        #         # puuting them all in an arry so I can get max or min... probably a
+        #         # better way to do this but it should work
+        #         small.append(np.dot(w, dataSet[k]))
+        #     # our -1 labels
+        #     else:
+        #         large.append(np.dot(w, dataSet[k]))
 
-        # print("small")
-        # print(small)
-        small = np.array(small)
-        large = np.array(large)
+        # # print("small")
+        # # print(small)
+        # small = np.array(small)
+        # large = np.array(large)
 
-        # hopefully the correct formula for b
-        b = -(large.max() + small.min()) / 2
+        # # hopefully the correct formula for b
+        # b = -(large.max() + small.min()) / 2
+
+        w = computeW(lams, labels, dataSet)
+        print("w")
+        print(w)
 
         # looping through the features again
+
         for j in range(0, len(dataSet)):
 
             # this is also formula for change in lambda and argmax lam argmin w
             temp = 1 - labels[j] * (np.dot(w, dataSet[j]) + b)
-            # adding them all up for our argmax lambda argmin w
-            maxmin += temp
+            # multipling by the lambda and adding them all up for our argmax lambda argmin w
+            maxmin += lams[j] * temp
 
             # getting the change in lambda i
             changeLam[j] = epsilon * temp
@@ -263,29 +277,28 @@ def learnLam(dataTrain, iters):
             lamTot += lams[j] * labels[j]
             # addding w tranpose w to maxmin to get loss
 
-        # a bunch of print functions I was using to check
+        # # a bunch of print functions I was using to check
         # print("b")
         # print(b)
 
+        # should I worry about this
         # print("lamTot")
         # print(lamTot)
         # last part of calculating loss
         loss = np.dot(w, w) + maxmin
         # put loss in losses array
         losses.append(loss)
-        # print("losses")
-        # print(losses)
+        # print("loss")
+        # print(loss)
 
-        # print("lambdas")
-        # print(lams)
-        # print(changeLam)
+        print("lambdas")
+        print(lams)
+        # # print(changeLam)
 
         # compute new w I think this order is correct but maybe I should I have done this before the
         # lambdas
-        w = computeW(lams, labels, dataSet)
-        # print("w")
-        # print(w)
-        # print("--------------------------")
+
+        print("--------------------------")
 
     return (lams, float(b), np.array(losses))
 

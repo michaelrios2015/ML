@@ -127,6 +127,30 @@ def learnParams(data):
     return classes / features
 
 
+# def featStats(Data, currClass):
+#     # extract data locations from one class
+#     inds = np.where(Data[:, 0] == currClass)
+
+#     # compute lambda values for two features
+#     lamSpeed = 1 / np.mean(Data[inds, 1])
+#     lamChirp = 1 / np.mean(Data[inds, 2])
+
+#     # return results
+#     return lamSpeed, lamChirp
+
+
+# def learnParams(Data):
+#     params = []
+#     totalClasses = Data[:, 0].max()
+
+#     # find parameters for each class
+#     for currClass in range(int(totalClasses) + 1):
+#         lamSpeed, lamChirp = featStats(Data, currClass)
+#         params.append([lamSpeed, lamChirp])
+
+#     return np.array(params)
+
+
 print(
     learnParams(
         np.array(
