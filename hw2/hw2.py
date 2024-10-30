@@ -1,7 +1,9 @@
 import scipy.io
 import numpy as np
+from sklearn.datasets import make_blobs
+import numpy as np
+import matplotlib.pyplot as plt
 
-# import matplotlib.pyplot as plt
 
 # looking at the data
 mat = scipy.io.loadmat("hw2\hw2data.mat")
@@ -148,13 +150,13 @@ def computeW(alphas, labels, dataSet):
 
 
 #  does not work with this... gets to zero loss but seems all wrong
-# dataTrain = np.array(
-#     [
-#         [-3.5, -1, -3, 1, 0.5, 2, 1],
-#         [-1.5, -0.5, -4, -1, 0, 3, 1],
-#         [3, 0, 4, 0, 0.5, 0.0, -1],
-#     ]
-# )
+dataTrain = np.array(
+    [
+        [-3.5, -1, -3, 1, 0.5, 2, 1],
+        [-1.5, -0.5, -4, -1, 0, 3, 1],
+        [3, 0, 4, 0, 0.5, 0.0, -1],
+    ]
+)
 
 iters = 40
 # so w goies yo [1,1] loss goes to zero ... so seems to be working
@@ -170,21 +172,31 @@ iters = 40
 # )
 
 
-dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
+# dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
 
-# deleteing the first column which just seems to be the index
-dataTrain = np.delete(dataTrain, 0, axis=1)
+# # deleteing the first column which just seems to be the index
+# dataTrain = np.delete(dataTrain, 0, axis=1)
 
-# print(len(dataTrain))
-# print(dataTrain[3])
+# # print(len(dataTrain))
+# # print(dataTrain[3])
 
-# convert 0 to -1
-dataTrain[dataTrain[:, 10] == 0, 10] = -1
+# # convert 0 to -1
+# dataTrain[dataTrain[:, 10] == 0, 10] = -1
 
-# getting 60
-dataTrain = dataTrain[:60]
+# # getting 60
+# dataTrain = dataTrain[:60]
 
-# print(dataTrain[3])
+# # print(dataTrain[3])
+
+# X, y = make_blobs(
+#     n_samples=50, centers=2, n_features=2, random_state=0, cluster_std=0.6
+# )
+
+# plt.scatter(X[:, 0], X[:, 1], c=y)
+# plt.show()
+
+# y[y == 0] = -1
+# dataTrain = np.column_stack((X, y))
 
 
 def learnLam(dataTrain, iters):
