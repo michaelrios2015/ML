@@ -89,66 +89,85 @@ import matplotlib.pyplot as plt
 
 # So at the moment very confused not sure how they are calculating lambda
 
-
-def learnParams(data):
-
-    # so we need a formula for lambda
-    # used ln and then the derivative to get the formula for lambda
-    # lambda = number of times a class is seen / sum of all the observations for that feature
-
-    # We find a different lambda for each class
-
-    # and then return those in an array based on class number and index
-
-    # find out how many classes we have but looking at the class list and assuming the highest number is the hightest class
-    num_classes = data[:, 0]
-    # print(print(num_classes))
-    top = int(max(num_classes)) + 1
-    # print("top =", top)
-
-    # these are two arrays both the length or our number of classes
-    # this holds a count of how many times a class is seen
-    classes = [0] * int(top)
-    classes = np.array(classes)
-
-    # this will hold the returned lambdas
-    features = [[0.0, 0.0]] * int(top)
-    features = np.array(features)
-    # print(features[1, 1])
-
-    # the clculations are pretty simple
-    for a in data:
-        classes[int(a[0])] = classes[int(a[0])] + 1
-        # print(a[1])
-        features[int(a[0]), 0] = features[int(a[0]), 0] + a[1]
-        features[int(a[0]), 1] = features[int(a[0]), 1] + a[2]
-
-    # vector math takes care of the return values :)
-    return classes / features
+############################################################
+# says something is wrong here
+# was my equation wronfg... seems to be the same not sure what is wrong
+##########################################################
 
 
-# def featStats(Data, currClass):
-#     # extract data locations from one class
-#     inds = np.where(Data[:, 0] == currClass)
+# def learnParams(data):
 
-#     # compute lambda values for two features
-#     lamSpeed = 1 / np.mean(Data[inds, 1])
-#     lamChirp = 1 / np.mean(Data[inds, 2])
+#     # so we need a formula for lambda
+#     # used ln and then the derivative to get the formula for lambda
+#     # lambda = number of times a class is seen / sum of all the observations for that feature
 
-#     # return results
-#     return lamSpeed, lamChirp
+#     # We find a different lambda for each class
+
+#     # and then return those in an array based on class number and index
+
+#     # find out how many classes we have but looking at the class list and assuming the highest number is the hightest class
+#     num_classes = data[:, 0]
+#     # print(print(num_classes))
+#     top = int(max(num_classes)) + 1
+#     # print("top =", top)
+
+#     # these are two arrays both the length or our number of classes
+#     # this holds a count of how many times a class is seen
+#     classes = [0] * int(top)
+#     classes = np.array(classes)
+
+#     # this will hold the returned lambdas
+#     features = [[0.0, 0.0]] * int(top)
+#     features = np.array(features)
+#     # print(features[1, 1])
+
+#     # the clculations are pretty simple
+#     for a in data:
+#         classes[int(a[0])] = classes[int(a[0])] + 1
+#         # print(a[1])
+#         features[int(a[0]), 0] = features[int(a[0]), 0] + a[1]
+#         features[int(a[0]), 1] = features[int(a[0]), 1] + a[2]
+
+#     # vector math takes care of the return values :)
+#     return classes / features
 
 
-# def learnParams(Data):
-#     params = []
-#     totalClasses = Data[:, 0].max()
+# ##########
+# professors answer
+########################
 
-#     # find parameters for each class
-#     for currClass in range(int(totalClasses) + 1):
-#         lamSpeed, lamChirp = featStats(Data, currClass)
-#         params.append([lamSpeed, lamChirp])
 
-#     return np.array(params)
+def featStats(Data, currClass):
+    # extract data locations from one class
+    inds = np.where(Data[:, 0] == currClass)
+    print("inds")
+    print(inds)
+    print("-----------------------")
+
+    # compute lambda values for two features
+    lamSpeed = 1 / np.mean(Data[inds, 1])
+    lamChirp = 1 / np.mean(Data[inds, 2])
+
+    # return results
+    return lamSpeed, lamChirp
+
+
+def learnParams(Data):
+    params = []
+    totalClasses = Data[:, 0].max()
+    print("totalClasses")
+    print(totalClasses)
+    print("-----------------------")
+
+    # find parameters for each class
+    for currClass in range(int(totalClasses) + 1):
+        print("currClass")
+        print(currClass)
+        print("-----------------------")
+        lamSpeed, lamChirp = featStats(Data, currClass)
+        params.append([lamSpeed, lamChirp])
+
+    return np.array(params)
 
 
 print(
@@ -218,20 +237,20 @@ def learnPriors(data):
     return np.array(final) / size
 
 
-print(
-    learnPriors(
-        np.array(
-            [
-                [0, 0.5, 200],
-                [1, 0.7, 130],
-                [0, 0.2, 100],
-                [1, 2, 10],
-                [0, 1.5, 50],
-                [1, 4, 20],
-            ]
-        )
-    )
-)
+# print(
+#     learnPriors(
+#         np.array(
+#             [
+#                 [0, 0.5, 200],
+#                 [1, 0.7, 130],
+#                 [0, 0.2, 100],
+#                 [1, 2, 10],
+#                 [0, 1.5, 50],
+#                 [1, 4, 20],
+#             ]
+#         )
+#     )
+# )
 
 ########################################################################
 # QUESTION 4
@@ -255,45 +274,103 @@ print(
 
 # the formual for expontial distubtion
 
+############################################################
+# says something is wrong here
+##########################################################
 
-def exp_dist(lamb, x):
-    return lamb / (m.e ** (lamb * x))
+
+# def exp_dist(lamb, x):
+#     return lamb / (m.e ** (lamb * x))
+
+# # well formula is definietly off
+
+# def labelBayes(birdFeats, params, priors):
+
+#     # for storing the winning class
+#     final = []
+
+#     # so if I undertood how to use vector math, and specifically vector math in pthon I might not need to use these for loops
+#     # right now I do, but hopefully I will learn the more efecient way :)
+#     for feat in birdFeats:
+#         # so we set the intial winner to zero and zero, so our very first run should beat that, the winner variable will not change
+#         # but that is fine
+#         pmax = 0
+#         winner = 0
+
+#         # then we have however many classes of birds, which is the length of params and priors
+#         for idx, param in enumerate(params):
+#             # then we apply the the params to each class and see which class is the biggest, we do not know how many classes but we only have two features
+
+#             # probability of class given first param and first feature measurment
+#             p1 = exp_dist(param[0], feat[0])
+
+#             # probability of class given 2nd param and 2nd feature measurment
+#             p2 = exp_dist(param[1], feat[1])
+
+#             # probabilties multipled with prior to get naive bayes
+#             ptotal = p1 * p2 * priors[idx]
+#             # if this total probablitly is bigger than the previous one make it the new pmax and remeber which class(winner) it is
+#             if ptotal > pmax:
+#                 pmax = ptotal
+#                 winner = idx
+
+#         # insert the winning class into our final array
+#         final.insert(len(final), winner)
+
+#     return np.array(final)
 
 
-def labelBayes(birdFeats, params, priors):
+# birdFeats so this is teh speed and chipr thing, have as many as we have birds
 
-    # for storing the winning class
-    final = []
+# params the parameters lambda for the speed for class i and params[i,1]
+# is the lambda for the chirp delay of class i. so for each bird fgeature I need to go through this and see which give me the maxium
+# but also tie in the priors, these are as many as we have classes of birds so probably different from bordfeatures
 
-    # so if I undertood how to use vector math, and specifically vector math in pthon I might not need to use these for loops
-    # right now I do, but hopefully I will learn the more efecient way :)
-    for feat in birdFeats:
-        # so we set the intial winner to zero and zero, so our very first run should beat that, the winner variable will not change
-        # but that is fine
-        pmax = 0
-        winner = 0
 
-        # then we have however many classes of birds, which is the length of params and priors
-        for idx, param in enumerate(params):
-            # then we apply the the params to each class and see which class is the biggest, we do not know how many classes but we only have two features
+# ##########
+# professors answer
+########################
 
-            # probability of class given first param and first feature measurment
-            p1 = exp_dist(param[0], feat[0])
 
-            # probability of class given 2nd param and 2nd feature measurment
-            p2 = exp_dist(param[1], feat[1])
+# for single data point, compute log likelihood:
+# ln(Lambda) – Lambda * x
+def myLogLikeli(x, lam):
+    return np.log(lam) - lam * x
 
-            # probabilties multipled with prior to get naive bayes
-            ptotal = p1 * p2 * priors[idx]
-            # if this total probablitly is bigger than the previous one make it the new pmax and remeber which class(winner) it is
-            if ptotal > pmax:
-                pmax = ptotal
-                winner = idx
 
-        # insert the winning class into our final array
-        final.insert(len(final), winner)
+# this is the same formula but we have used ln to make it easier to get the small probablities??
 
-    return np.array(final)
+
+def labelBayes(birdFeats, PARAMS, PRIORS):
+    # initialize variables
+    totalSamples = birdFeats.shape[0]
+    print("totalSamples")
+    print(totalSamples)
+    # assuming classes are numbers 0, 1, 2, ... MAX
+    totalClasses = PRIORS.shape[0]
+    print("totalClasses")
+    print(totalClasses)
+    currClassVec = np.zeros(totalSamples)
+    # Compute class for each data point
+    for i in range(totalSamples):
+
+        # get np arrays ready
+        probVec = np.zeros(totalClasses)
+
+    # consider each possible class
+    for currClass in range(totalClasses):
+        # find posterior probability
+        lamSpeed = PARAMS[currClass, 0]
+        lamChirp = PARAMS[currClass, 1]
+
+        probVec[currClass] = myLogLikeli(birdFeats[i, 0], lamSpeed)
+        # so hole thing done with ln... I guess so
+        probVec[currClass] += myLogLikeli(birdFeats[i, 1], lamChirp)
+        probVec[currClass] += np.log(PRIORS[currClass])
+        # find highest probability class
+        currClassVec[i] = np.argmax(probVec)
+
+    return np.array(currClassVec)
 
 
 print(
@@ -303,10 +380,3 @@ print(
         np.array([0.4, 0.6]),
     )
 )
-
-
-# birdFeats so this is teh speed and chipr thing, have as many as we have birds
-
-# params the parameters lambda for the speed for class i and params[i,1]
-# is the lambda for the chirp delay of class i. so for each bird fgeature I need to go through this and see which give me the maxium
-# but also tie in the priors, these are as many as we have classes of birds so probably different from bordfeatures

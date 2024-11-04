@@ -149,16 +149,19 @@ def computeW(alphas, labels, dataSet):
 # this uses the dataSet....looks really complex hopefully not
 
 
-#  does not work with this... gets to zero loss but seems all wrong
-dataTrain = np.array(
-    [
-        [-3.5, -1, -3, 1, 0.5, 2, 1],
-        [-1.5, -0.5, -4, -1, 0, 3, 1],
-        [3, 0, 4, 0, 0.5, 0.0, -1],
-    ]
-)
+## Trainging set 1 ##################################################
 
-iters = 40
+# #  does not work with this... gets to zero loss but seems all wrong
+# dataTrain = np.array(
+#     [
+#         [-3.5, -1, -3, 1, 0.5, 2, 1],
+#         [-1.5, -0.5, -4, -1, 0, 3, 1],
+#         [3, 0, 4, 0, 0.5, 0.0, -1],
+#     ]
+# )
+
+## Trainging set 2 ######################################################
+
 # so w goies yo [1,1] loss goes to zero ... so seems to be working
 # the answer is oddly large but is essentially [1,1]
 # but the lamtotal is huge, what is going on
@@ -171,6 +174,8 @@ iters = 40
 #     ]
 # )
 
+
+## Trainging set 3 ######################################################
 
 # dataTrain = np.genfromtxt("hw2\hw2data.csv", delimiter=",", skip_header=1)
 
@@ -186,17 +191,22 @@ iters = 40
 # # getting 60
 # dataTrain = dataTrain[:60]
 
-# # print(dataTrain[3])
+# print(dataTrain[3])
 
-# X, y = make_blobs(
-#     n_samples=50, centers=2, n_features=2, random_state=0, cluster_std=0.6
-# )
+## Trainging set 4 ######################################################
 
-# plt.scatter(X[:, 0], X[:, 1], c=y)
-# plt.show()
+X, y = make_blobs(
+    n_samples=50, centers=2, n_features=2, random_state=0, cluster_std=0.6
+)
 
-# y[y == 0] = -1
-# dataTrain = np.column_stack((X, y))
+plt.scatter(X[:, 0], X[:, 1], c=y)
+plt.show()
+
+y[y == 0] = -1
+dataTrain = np.column_stack((X, y))
+
+
+iters = 40
 
 
 def learnLam(dataTrain, iters):
@@ -205,13 +215,11 @@ def learnLam(dataTrain, iters):
     n = len(dataTrain[0]) - 1
     # Intialize w to all zeros,
     w = np.zeros(n)
-    # w = np.random.randint(-1, 1, (n))
-    # w = np.random.uniform(low=0.0, high=1.0, size=n)
-    print(w)
+    # print(w)
+
     # lambdas to all 1s, one lambda for each xi
-    # lams = np.full(len(dataTrain), 0.5)
     lams = np.ones(len(dataTrain))
-    print(lams)
+    # print(lams)
 
     # Making epilison really small becuase it seem to crash otherwhise
     epsilon = 0.01
@@ -240,32 +248,30 @@ def learnLam(dataTrain, iters):
         # for b
         large = []
         small = []
-        # going to try to get b largest dot product for a datapoint in yi=-1 and the smallest dot product for a datapoint in yi=+1
+        # # going to try to get b largest dot product for a datapoint in yi=-1 and the smallest dot product for a datapoint in yi=+1
         for k in range(0, len(dataSet)):
 
             # so just going through each class and w transform xi
             if labels[k] == 1:
-                # puuting them all in an arry so I can get max or min... probably a
+                # puting them all in an arry so I can get max or min... probably a
                 # better way to do this but it should work
                 small.append(np.dot(w, dataSet[k]))
             # our -1 labels
             else:
                 large.append(np.dot(w, dataSet[k]))
 
-        # print("small")
-        # print(small)
+        # just putting them in an np array probably not neccessary
         small = np.array(small)
         large = np.array(large)
 
         # hopefully the correct formula for b
         b = -(large.max() + small.min()) / 2
 
+        # computing new W
         w = computeW(lams, labels, dataSet)
-        print("w")
         print(w)
 
-        # looping through the features again
-
+        # looping through the features again to compute loss and change in lambda
         for j in range(0, len(dataSet)):
 
             # this is also formula for change in lambda and argmax lam argmin w
@@ -277,9 +283,6 @@ def learnLam(dataTrain, iters):
             changeLam[j] = epsilon * temp
 
             # updating our lambda but never going below zero
-            # made it .001 because I some lambada numbers seemed to go very high and i was worried
-            # the arthmetic might get dicey... no cluie if it is really needed but wanted to give it
-            # a shot
             if lams[j] + changeLam[j] >= 0:
                 lams[j] = lams[j] + changeLam[j]
             else:
@@ -289,33 +292,13 @@ def learnLam(dataTrain, iters):
             lamTot += lams[j] * labels[j]
             # addding w tranpose w to maxmin to get loss
 
-        # # a bunch of print functions I was using to check
-        # print("b")
-        # print(b)
-
-        # should I worry about this
-        # print("lamTot")
-        # print(lamTot)
         # last part of calculating loss
         loss = np.dot(w, w) + maxmin
         # put loss in losses array
         losses.append(loss)
-        # print("loss")
-        # print(loss)
-
-        print("lambdas")
-        print(lams)
-        # # print(changeLam)
-
-        # compute new w I think this order is correct but maybe I should I have done this before the
-        # lambdas
-
-        print("--------------------------")
 
     return (lams, float(b), np.array(losses))
 
-
-# learnLam(dataTrain, iters)
 
 lams, b, losses = learnLam(dataTrain, iters)
 
