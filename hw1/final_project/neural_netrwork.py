@@ -1,5 +1,11 @@
 import math
 import random
+import numpy as np
+
+
+def sig(x):
+    return 1 / (1 + np.exp(-x))
+
 
 # an easy input
 
@@ -35,304 +41,397 @@ input_4 = [1, 1, 0]
 # input_4 = [1, 1, 1]
 
 
-# so I can loop through
+# seperating features and classes
 
-inputs = [input_1, input_2, input_3, input_4]
+# inputs = np.array([input_1, input_2, input_3, input_4])
 
+# print(inputs)
 
-# we seem to be doing one bias per layer and does it have a weight, well honestly not sure that is waht i did with math for data science
+# classes = inputs[:, 0]
 
+# print(classes)
+
+# features = np.delete(inputs, 0, axis=1)
+
+# print(features)
+
+# maybe doing one bias per nueron just like math for data science waiting to hear back will start that way
+# does not seem like the best way to do this but also seems slightly better than original version
 layers = 2
 
+layer_1 = 2
+
+layer_2 = 1
+
+
 # want a np array of this size
-weights = [layers]
 
-# then we need to put set the size of the neurons for each layer
+# weights layer 1, each layer represents the weights to one neuron
+# wl1 = np.random.uniform(-1, 1, size=(layer_1, features))
+# wl1 = np.random.randint(1, 10, size=(layer_1, features))
+wl1 = np.array([[0.4, 0.8], [-0.4, -0.4]])
 
+# bias weights layer 1
+# bwl1 = np.random.uniform(-1, 1, layer_1)
+bwl1 = np.array([5, 6])
 
-# I also have 9 weights
-# will be using random.uniform unseeded or some such
+# neurons layer 1, start at zero
+nl1 = np.zeros(layer_1)
 
-# biases
-# does one layer usually have two biases I thought it was one bias and then a different weight for each neuron it goes to
+print(wl1)
 
-b1 = b2 = bb1 = 1
+# now i need to to loop through all the
 
-# print(f'b1 = {b1}')
+###################################################################
+#     forward propagation layer 1
+##################################################################
 
-# four for the input to hidden layer i to j
-wij_11 = random.uniform(-1, 1)
 
-# print(wij_11)
+# wights times features level 1
+wtfl1 = wl1 * [10, 20]
 
-wij_12 = random.uniform(-1, 1)
+# sum of wights times features level 1
+swtfl1 = np.sum(wtfl1, axis=1)
+print(swtfl1)
 
-# print(wij_12)
+# sum of weight + biases
+total_sum = bwl1 + swtfl1
+print(total_sum)
 
-wij_21 = random.uniform(-1, 1)
+for i in range(len(total_sum)):
+    nl1[i] = sig(total_sum[i])
 
-# print(wij_21)
+print(nl1)
 
-wij_22 = random.uniform(-1, 1)
 
-# print(wij_22)
+###################################################################
+#     forward propagation layer 2
+##################################################################
 
-# 2 for thr hidden layer to the output layer j to k
+# going to intaialize here but should be done outside of for loop so will need to move
 
-wjk_11 = random.uniform(-1, 1)
+# weights layer 2, each layer represents the weights to one neuron
+# wl2 = np.random.uniform(-1, 1, size=(layer_2, features))
+# wl2 = np.random.randint(1, 10, size=(layer_2, features))
+wl2 = np.array([0.2, 0.3])
 
-# print(wjk_11)
+# bias weights layer 2
+# bwl2 = np.random.uniform(-1, 1, layer_2)
+bwl2 = np.array([0.2])
 
-wjk_21 = random.uniform(-1, 1)
+# neurons layer 2, start at zero
+nl2 = np.zeros(layer_2)
 
-# print(wjk_21)
+# layer 2 weights times neurons of layer 1
+lw2n1 = nl1 * wl2
 
-# 3 bias weights
+print(lw2n1)
 
-wb1 = random.uniform(-1, 1)
+# sum of wights times features level 1
+swtfl2 = np.sum(lw2n1)
+print(swtfl2)
 
-wb2 = random.uniform(-1, 1)
+# sum of weight + biases
+total_sum_2 = bwl2 + swtfl2
+print(total_sum_2)
 
-wbb1 = random.uniform(-1, 1)
+for i in range(len(total_sum_2)):
+    nl2[i] = sig(total_sum_2[i])
 
+print(nl2)
 
-# eta
+###################################################################
+#     backward propagation layer 2
+##################################################################
 
-eta = 0.1
 
-# need to start the error to get us into the while loop
-error = 100
+# print()
 
-counter = 0
+# # then we need to put set the size of the neurons for each layer
 
-# an array for our errors
-all_errors = []
+# # I also have 9 weights
+# # will be using random.uniform unseeded or some such
 
+# # biases
+# # does one layer usually have two biases I thought it was one bias and then a different weight for each neuron it goes to
 
-while error > 0.0005:
+# b1 = b2 = bb1 = 1
 
-    # reset the error to zero as we will calculate it each time
-    error = 0
+# # print(f'b1 = {b1}')
 
-    # shuffles our inputs around, I think this is helpful but not entirely sure
-    random.shuffle(inputs)
+# # four for the input to hidden layer i to j
+# wij_11 = random.uniform(-1, 1)
 
-    counter += 1
+# # print(wij_11)
 
-    for i in inputs:
+# wij_12 = random.uniform(-1, 1)
 
-        # FORWARD PROPAGATION
-        # strictly the input
-        z1 = i[0]
+# # print(wij_12)
 
-        # print(f'z1 = {z1}')
-        z2 = i[1]
+# wij_21 = random.uniform(-1, 1)
 
-        # print(f'z2 = {z2}')
+# # print(wij_21)
 
-        # our target value
-        t_1 = i[2]
+# wij_22 = random.uniform(-1, 1)
 
-        # print(f't_1 = {t_1}')
+# # print(wij_22)
 
-        # making the hidden layer
-        # STEP ONE SUM
+# # 2 for thr hidden layer to the output layer j to k
 
-        net_output_1 = b1 * wb1 + z1 * wij_11 + z2 * wij_21
+# wjk_11 = random.uniform(-1, 1)
 
-        net_output_2 = b2 * wb2 + z1 * wij_12 + z2 * wij_22
+# # print(wjk_11)
 
-        # print(f'\nnet_output1: {net_output_1}  \n')
+# wjk_21 = random.uniform(-1, 1)
 
-        # print(f'net_output2: {net_output_2}  \n')
+# # print(wjk_21)
 
-        # SIGMOID FUNCTIONS
-        zz1 = 1 / (1 + math.exp(-net_output_1))
-        zz2 = 1 / (1 + math.exp(-net_output_2))
+# # 3 bias weights
 
-        # print(f'zz1 = {zz1}\n')
-        # print(f'zz2 = {zz2}\n')
+# wb1 = random.uniform(-1, 1)
 
-        # OUTPUT LAYER SUM
-        net_output_final = bb1 * wbb1 + zz1 * wjk_11 + zz2 * wjk_21
+# wb2 = random.uniform(-1, 1)
 
-        # print(f'\nnet_output1: {net_output_final}  \n')
+# wbb1 = random.uniform(-1, 1)
 
-        # SIGMOID FUNCTION FINAL LAYER
-        y1 = 1 / (1 + math.exp(-net_output_final))
 
-        #  seems to be working :)
-        # print(f't1 = {t_1} & y1 = {y1}\n')
+# # eta
 
-        # ERROR
-        error = error + 0.5 * pow((t_1 - y1), 2)
+# eta = 0.1
 
-        # print(f'error = {error}\n')
+# # need to start the error to get us into the while loop
+# error = 100
 
-        # BACKWARD PROPOGATION
+# counter = 0
 
-        # DELTA K
-        # so delta k will change the weights of all the hideen layer weights
-        delta_k1 = y1 * (1 - y1) * (t_1 - y1)
+# # an array for our errors
+# all_errors = []
 
-        # print(f'delta_k1 = {delta_k1}\n')
 
-        # the delta_js change the input layer weights
-        # delta_j1 for the weights going to j1 (1,1) (2,1) + the bias weight
-        delta_j1 = zz1 * (1 - zz1) * (wjk_11 * delta_k1)
+# while error > 0.0005:
 
-        # print(f'delta_j1 = {delta_j1}\n')
+#     # reset the error to zero as we will calculate it each time
+#     error = 0
 
-        # deltaj2 for those going to j2 (1,2) (2,2) and the bias weight
-        delta_j2 = zz2 * (1 - zz2) * (wjk_21 * delta_k1)
+#     # shuffles our inputs around, I think this is helpful but not entirely sure
+#     random.shuffle(inputs)
 
-        # print(f'delta_j2 = {delta_j2}\n')
+#     counter += 1
 
-        # now we calculate the changes to the weights and update them
-        delta_wjk_11 = eta * zz1 * delta_k1
+#     for i in inputs:
 
-        # print(f'delta_wjk_11 = {delta_wjk_11}\n')
+#         # FORWARD PROPAGATION
+#         # strictly the input
+#         z1 = i[0]
 
-        delta_wjk_21 = eta * zz2 * delta_k1
-        # print(f'delta_wjk_21 = {delta_wjk_21}\n')
+#         # print(f'z1 = {z1}')
+#         z2 = i[1]
 
-        # pretty sure this is the right formula, as we don't seem to to be using the weights in the pervious 2 formulas
-        delta_wbb1 = eta * bb1 * delta_k1
+#         # print(f'z2 = {z2}')
 
-        # print(f'delta_wbb1 = {delta_wbb1}\n')
+#         # our target value
+#         t_1 = i[2]
 
-        # Update the weights
-        wjk_11 += delta_wjk_11
+#         # print(f't_1 = {t_1}')
 
-        # print(f'wjk_11 = {wjk_11}\n')
+#         # making the hidden layer
+#         # STEP ONE SUM
 
-        wjk_21 += delta_wjk_21
+#         net_output_1 = b1 * wb1 + z1 * wij_11 + z2 * wij_21
 
-        # print(f'wjk_21 = {wjk_21}\n')
+#         net_output_2 = b2 * wb2 + z1 * wij_12 + z2 * wij_22
 
-        wbb1 += delta_wbb1
+#         # print(f'\nnet_output1: {net_output_1}  \n')
 
-        # print(f'wbb1 = {wbb1}\n')
+#         # print(f'net_output2: {net_output_2}  \n')
 
-        # calvulating delta for j1 weights
+#         # SIGMOID FUNCTIONS
+#         zz1 = 1 / (1 + math.exp(-net_output_1))
+#         zz2 = 1 / (1 + math.exp(-net_output_2))
 
-        delta_wij_11 = eta * z1 * delta_j1
+#         # print(f'zz1 = {zz1}\n')
+#         # print(f'zz2 = {zz2}\n')
 
-        # print(f'delta_wij_11 = {delta_wij_11}\n')
+#         # OUTPUT LAYER SUM
+#         net_output_final = bb1 * wbb1 + zz1 * wjk_11 + zz2 * wjk_21
 
-        delta_wij_21 = eta * z2 * delta_j1
+#         # print(f'\nnet_output1: {net_output_final}  \n')
 
-        # print(f'delta_wij_21 = {delta_wij_21}\n')
+#         # SIGMOID FUNCTION FINAL LAYER
+#         y1 = 1 / (1 + math.exp(-net_output_final))
 
-        # pretty sure this is the right formula, as we don't seem to to be using the weights in the pervious 2 formulas
-        delta_wb1 = eta * b1 * delta_j1
+#         #  seems to be working :)
+#         # print(f't1 = {t_1} & y1 = {y1}\n')
 
-        # print(f'delta_wb1 = {delta_wb1}\n')
+#         # ERROR
+#         error = error + 0.5 * pow((t_1 - y1), 2)
 
-        # Update the weights for j1
-        wij_11 += delta_wij_11
+#         # print(f'error = {error}\n')
 
-        # print(f'wij_11 = {wij_11}\n')
+#         # BACKWARD PROPOGATION
 
-        wij_21 += delta_wij_21
+#         # DELTA K
+#         # so delta k will change the weights of all the hideen layer weights
+#         delta_k1 = y1 * (1 - y1) * (t_1 - y1)
 
-        # print(f'wij_21 = {wij_21}\n')
+#         # print(f'delta_k1 = {delta_k1}\n')
 
-        wb1 += delta_wb1
+#         # the delta_js change the input layer weights
+#         # delta_j1 for the weights going to j1 (1,1) (2,1) + the bias weight
+#         delta_j1 = zz1 * (1 - zz1) * (wjk_11 * delta_k1)
 
-        # print(f'wb1 = {wb1}\n')
+#         # print(f'delta_j1 = {delta_j1}\n')
 
-        # calvulating delta for j2 weights
+#         # deltaj2 for those going to j2 (1,2) (2,2) and the bias weight
+#         delta_j2 = zz2 * (1 - zz2) * (wjk_21 * delta_k1)
 
-        delta_wij_12 = eta * z1 * delta_j2
+#         # print(f'delta_j2 = {delta_j2}\n')
 
-        # print(f'delta_wij_12 = {delta_wij_12}\n')
+#         # now we calculate the changes to the weights and update them
+#         delta_wjk_11 = eta * zz1 * delta_k1
 
-        delta_wij_22 = eta * z2 * delta_j2
+#         # print(f'delta_wjk_11 = {delta_wjk_11}\n')
 
-        # print(f'delta_wij_22 = {delta_wij_22}\n')
+#         delta_wjk_21 = eta * zz2 * delta_k1
+#         # print(f'delta_wjk_21 = {delta_wjk_21}\n')
 
-        # pretty sure this is the right formula, as we don't seem to to be using the weights in the pervious 2 formulas
-        delta_wb2 = eta * b2 * delta_j2
+#         # pretty sure this is the right formula, as we don't seem to to be using the weights in the pervious 2 formulas
+#         delta_wbb1 = eta * bb1 * delta_k1
 
-        # print(f'delta_wb2 = {delta_wb2}\n')
+#         # print(f'delta_wbb1 = {delta_wbb1}\n')
 
-        # Update the weights for j2
-        wij_12 += delta_wij_12
+#         # Update the weights
+#         wjk_11 += delta_wjk_11
 
-        # print(f'wij_12 = {wij_12}\n')
+#         # print(f'wjk_11 = {wjk_11}\n')
 
-        wij_22 += delta_wij_22
+#         wjk_21 += delta_wjk_21
 
-        # print(f'wij_22 = {wij_22}\n')
+#         # print(f'wjk_21 = {wjk_21}\n')
 
-        wb2 += delta_wb2
+#         wbb1 += delta_wbb1
 
-        # print(f'wb2 = {wb2}\n')
+#         # print(f'wbb1 = {wbb1}\n')
 
-    all_errors.append(error)
+#         # calvulating delta for j1 weights
 
-# print(f't1 = {t_1} & y1 = {y1}\n')
+#         delta_wij_11 = eta * z1 * delta_j1
 
-print(f"error = {error}\n")
+#         # print(f'delta_wij_11 = {delta_wij_11}\n')
 
+#         delta_wij_21 = eta * z2 * delta_j1
 
-print(f"counter = {counter}\n")
+#         # print(f'delta_wij_21 = {delta_wij_21}\n')
 
+#         # pretty sure this is the right formula, as we don't seem to to be using the weights in the pervious 2 formulas
+#         delta_wb1 = eta * b1 * delta_j1
 
-print(f"wij_11 = {wij_11}\n")
+#         # print(f'delta_wb1 = {delta_wb1}\n')
 
-print(f"wij_12 = {wij_12}\n")
+#         # Update the weights for j1
+#         wij_11 += delta_wij_11
 
-print(f"wij_21 = {wij_21}\n")
+#         # print(f'wij_11 = {wij_11}\n')
 
-print(f"wij_22 = {wij_22}\n")
+#         wij_21 += delta_wij_21
 
-print(f"wjk_11 = {wjk_11}\n")
+#         # print(f'wij_21 = {wij_21}\n')
 
-print(f"wjk_21 = {wjk_21}\n")
+#         wb1 += delta_wb1
 
-print(f"wb1 = {wb1}\n")
+#         # print(f'wb1 = {wb1}\n')
 
-print(f"wb2 = {wb2}\n")
+#         # calvulating delta for j2 weights
 
-print(f"wbb1 = {wbb1}\n")
+#         delta_wij_12 = eta * z1 * delta_j2
 
-# running one last time with the correct weights so I can get the final results for all the inputs
+#         # print(f'delta_wij_12 = {delta_wij_12}\n')
 
-error = 0
+#         delta_wij_22 = eta * z2 * delta_j2
 
+#         # print(f'delta_wij_22 = {delta_wij_22}\n')
 
-for i in inputs:
+#         # pretty sure this is the right formula, as we don't seem to to be using the weights in the pervious 2 formulas
+#         delta_wb2 = eta * b2 * delta_j2
 
-    z1 = i[0]
+#         # print(f'delta_wb2 = {delta_wb2}\n')
 
-    z2 = i[1]
+#         # Update the weights for j2
+#         wij_12 += delta_wij_12
 
-    t_1 = i[2]
+#         # print(f'wij_12 = {wij_12}\n')
 
-    net_output_1 = b1 * wb1 + z1 * wij_11 + z2 * wij_21
+#         wij_22 += delta_wij_22
 
-    net_output_2 = b2 * wb2 + z1 * wij_12 + z2 * wij_22
+#         # print(f'wij_22 = {wij_22}\n')
 
-    zz1 = 1 / (1 + math.exp(-net_output_1))
-    zz2 = 1 / (1 + math.exp(-net_output_2))
+#         wb2 += delta_wb2
 
-    net_output_final = bb1 * wbb1 + zz1 * wjk_11 + zz2 * wjk_21
+#         # print(f'wb2 = {wb2}\n')
 
-    y1 = 1 / (1 + math.exp(-net_output_final))
+#     all_errors.append(error)
 
-    #  seems to be working :)
-    print(f"t1 = {t_1} | x1 = {z1} | x2 = {z2} | y1 = {y1}\n")
+# # print(f't1 = {t_1} & y1 = {y1}\n')
 
-    # ERROR
-    error = error + 0.5 * pow((t_1 - y1), 2)
+# print(f"error = {error}\n")
 
 
-print(f"error = {error}\n")
+# print(f"counter = {counter}\n")
 
 
-# if you want to see more of the errors just use this
-# for i in range(len(all_errors)):
-#     if i % 1000 == 0:
-#         print(all_errors[i])
+# print(f"wij_11 = {wij_11}\n")
+
+# print(f"wij_12 = {wij_12}\n")
+
+# print(f"wij_21 = {wij_21}\n")
+
+# print(f"wij_22 = {wij_22}\n")
+
+# print(f"wjk_11 = {wjk_11}\n")
+
+# print(f"wjk_21 = {wjk_21}\n")
+
+# print(f"wb1 = {wb1}\n")
+
+# print(f"wb2 = {wb2}\n")
+
+# print(f"wbb1 = {wbb1}\n")
+
+# # running one last time with the correct weights so I can get the final results for all the inputs
+
+# error = 0
+
+
+# for i in inputs:
+
+#     z1 = i[0]
+
+#     z2 = i[1]
+
+#     t_1 = i[2]
+
+#     net_output_1 = b1 * wb1 + z1 * wij_11 + z2 * wij_21
+
+#     net_output_2 = b2 * wb2 + z1 * wij_12 + z2 * wij_22
+
+#     zz1 = 1 / (1 + math.exp(-net_output_1))
+#     zz2 = 1 / (1 + math.exp(-net_output_2))
+
+#     net_output_final = bb1 * wbb1 + zz1 * wjk_11 + zz2 * wjk_21
+
+#     y1 = 1 / (1 + math.exp(-net_output_final))
+
+#     #  seems to be working :)
+#     print(f"t1 = {t_1} | x1 = {z1} | x2 = {z2} | y1 = {y1}\n")
+
+#     # ERROR
+#     error = error + 0.5 * pow((t_1 - y1), 2)
+
+
+# print(f"error = {error}\n")
+
+
+# # if you want to see more of the errors just use this
+# # for i in range(len(all_errors)):
+# #     if i % 1000 == 0:
+# #         print(all_errors[i])
