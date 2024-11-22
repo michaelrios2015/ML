@@ -43,17 +43,17 @@ input_4 = [1, 1, 0]
 
 # seperating features and classes
 
-# inputs = np.array([input_1, input_2, input_3, input_4])
+inputs = np.array([input_1, input_2, input_3, input_4])
 
-# print(inputs)
+print(inputs)
 
-# classes = inputs[:, 0]
+classes = inputs[:, 0]
 
-# print(classes)
+print(classes)
 
-# features = np.delete(inputs, 0, axis=1)
+features = np.delete(inputs, 0, axis=1)
 
-# print(features)
+print(features)
 
 # maybe doing one bias per nueron just like math for data science waiting to hear back will start that way
 # does not seem like the best way to do this but also seems slightly better than original version
@@ -63,7 +63,7 @@ layer_1 = 2
 
 layer_2 = 1
 
-
+epsil = 0.1
 # want a np array of this size
 
 # weights layer 1, each layer represents the weights to one neuron
@@ -71,129 +71,148 @@ layer_2 = 1
 # wl1 = np.random.randint(1, 10, size=(layer_1, features))
 wl1 = np.array([[0.4, 0.8], [-0.4, -0.4]])
 
+print(wl1)
+
+# weights layer 2, each layer represents the weights to one neuron
+# wl2 = np.random.uniform(-1, 1, size=(layer_2, layer_1))
+# wl2 = np.random.randint(1, 10, size=(layer_2, features))
+wl2 = np.array([[0.2, 0.3]])
+
+
+# in theory i can put the wights into somthing like this, in practice I will rpobably not
+# test1 = np.array([wl1, wl2], dtype=object)
+
+# print(test1)
+
+
+# for i in range(len(test1)):
+#     for j in range(len(test1[i])):
+#         print(test1[i][j])
+
+# print("wl2")
+# print(wl2)
+
+
 # bias weights layer 1
 # bwl1 = np.random.uniform(-1, 1, layer_1)
 bwl1 = np.array([5, 6])
 
+# bias weights layer 2
+# bwl2 = np.random.uniform(-1, 1, layer_2)
+bwl2 = np.array([0.2])
+
+bias_weights = np.array([bwl1, bwl2], dtype=object)
+
 # neurons layer 1, start at zero
 nl1 = np.zeros(layer_1)
 
-print(wl1)
+# neurons layer 2, start at zero
+nl2 = np.zeros(layer_2)
 
-# now i need to to loop through all the
+neurons = np.array([nl1, nl2], dtype=object)
 
+# for i in range(len(neurons)):
+#     print(neurons[i])
+#     print("----")
+#     for j in range(len(neurons[i])):
+#         print(neurons[i][j])
+
+# print(neurons)
+
+# so ideally my neurons would all be in one array and i would loop through the array to get all the levels
+# this is better than what I had but it could be better
 ###################################################################
 #     forward propagation layer 1
 ##################################################################
 
 
 # wights times features level 1
-wtfl1 = wl1 * [10, 20]
+wtfl1 = wl1 * [2, 1]
 
 # sum of wights times features level 1
 swtfl1 = np.sum(wtfl1, axis=1)
 print(swtfl1)
 
 # sum of weight + biases
-total_sum = bwl1 + swtfl1
+total_sum = bias_weights[0] + swtfl1
 print(total_sum)
 
+# sending total sums to sigmoid function
 for i in range(len(total_sum)):
-    nl1[i] = sig(total_sum[i])
+    # that will be the value of our layer 1 neurons
+    neurons[0][i] = sig(total_sum[i])
 
-print(nl1)
+print("neurons[0]")
+print(neurons[0])
 
 
 ###################################################################
 #     forward propagation layer 2
 ##################################################################
 
-# going to intaialize here but should be done outside of for loop so will need to move
-
-# weights layer 2, each layer represents the weights to one neuron
-# wl2 = np.random.uniform(-1, 1, size=(layer_2, features))
-# wl2 = np.random.randint(1, 10, size=(layer_2, features))
-wl2 = np.array([0.2, 0.3])
-
-# bias weights layer 2
-# bwl2 = np.random.uniform(-1, 1, layer_2)
-bwl2 = np.array([0.2])
-
-# neurons layer 2, start at zero
-nl2 = np.zeros(layer_2)
 
 # layer 2 weights times neurons of layer 1
-lw2n1 = nl1 * wl2
+lw2n1 = neurons[0] * wl2
 
 print(lw2n1)
 
 # sum of wights times features level 1
-swtfl2 = np.sum(lw2n1)
+swtfl2 = np.sum(lw2n1, axis=1)
 print(swtfl2)
 
 # sum of weight + biases
-total_sum_2 = bwl2 + swtfl2
+total_sum_2 = bias_weights[1] + swtfl2
 print(total_sum_2)
 
 for i in range(len(total_sum_2)):
-    nl2[i] = sig(total_sum_2[i])
+    neurons[1][i] = sig(total_sum_2[i])
 
-print(nl2)
+print("neurons[1]")
+print(neurons[1])
+
+# calculate error??
 
 ###################################################################
 #     backward propagation layer 2
 ##################################################################
 
+# step one calculate delta
 
-# print()
+delta_top = (1 - neurons[1]) * (1 - neurons[1]) * neurons[1]
 
-# # then we need to put set the size of the neurons for each layer
+print("delta_top")
+print(delta_top)
 
-# # I also have 9 weights
-# # will be using random.uniform unseeded or some such
+# just the rest of the formula with the handy dandy use of arrays
+wl2 = wl2 + (epsil * delta_top * wl2)
 
-# # biases
-# # does one layer usually have two biases I thought it was one bias and then a different weight for each neuron it goes to
+# probably a better way to combine these but this works for getting bias weights at least if that 1 value
+# is correct
+bias_weights[1] = bias_weights[1] + (epsil * delta_top)
 
-# b1 = b2 = bb1 = 1
+print("layer 2 updated weights regular and bias")
+print(wl2)
+print(bias_weights[1])
 
-# # print(f'b1 = {b1}')
 
-# # four for the input to hidden layer i to j
-# wij_11 = random.uniform(-1, 1)
+###################################################################
+#     backward propagation layer 1
+##################################################################
 
-# # print(wij_11)
 
-# wij_12 = random.uniform(-1, 1)
+# so here it gets a bit harder we have the delta
 
-# # print(wij_12)
+# but this does seem to get us our new error correction thing
+error_corr = np.sum(delta_top * wl1, axis=1)
+print(error_corr)
 
-# wij_21 = random.uniform(-1, 1)
+# I think this is the lower cas delta
+lil_deltal1 = (1 - neurons[0]) * error_corr * neurons[0]
 
-# # print(wij_21)
+print(lil_deltal1)
 
-# wij_22 = random.uniform(-1, 1)
-
-# # print(wij_22)
-
-# # 2 for thr hidden layer to the output layer j to k
-
-# wjk_11 = random.uniform(-1, 1)
-
-# # print(wjk_11)
-
-# wjk_21 = random.uniform(-1, 1)
-
-# # print(wjk_21)
-
-# # 3 bias weights
-
-# wb1 = random.uniform(-1, 1)
-
-# wb2 = random.uniform(-1, 1)
-
-# wbb1 = random.uniform(-1, 1)
-
+print("changed weights layer 1")
+print(wl1 + epsil * lil_deltal1 * [2, 1])
 
 # # eta
 
@@ -220,49 +239,8 @@ print(nl2)
 
 #     for i in inputs:
 
-#         # FORWARD PROPAGATION
-#         # strictly the input
-#         z1 = i[0]
 
-#         # print(f'z1 = {z1}')
-#         z2 = i[1]
-
-#         # print(f'z2 = {z2}')
-
-#         # our target value
-#         t_1 = i[2]
-
-#         # print(f't_1 = {t_1}')
-
-#         # making the hidden layer
-#         # STEP ONE SUM
-
-#         net_output_1 = b1 * wb1 + z1 * wij_11 + z2 * wij_21
-
-#         net_output_2 = b2 * wb2 + z1 * wij_12 + z2 * wij_22
-
-#         # print(f'\nnet_output1: {net_output_1}  \n')
-
-#         # print(f'net_output2: {net_output_2}  \n')
-
-#         # SIGMOID FUNCTIONS
-#         zz1 = 1 / (1 + math.exp(-net_output_1))
-#         zz2 = 1 / (1 + math.exp(-net_output_2))
-
-#         # print(f'zz1 = {zz1}\n')
-#         # print(f'zz2 = {zz2}\n')
-
-#         # OUTPUT LAYER SUM
-#         net_output_final = bb1 * wbb1 + zz1 * wjk_11 + zz2 * wjk_21
-
-#         # print(f'\nnet_output1: {net_output_final}  \n')
-
-#         # SIGMOID FUNCTION FINAL LAYER
-#         y1 = 1 / (1 + math.exp(-net_output_final))
-
-#         #  seems to be working :)
-#         # print(f't1 = {t_1} & y1 = {y1}\n')
-
+# checking final neuron vs expected value
 #         # ERROR
 #         error = error + 0.5 * pow((t_1 - y1), 2)
 
