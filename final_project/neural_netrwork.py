@@ -63,13 +63,13 @@ print(features)
 # ###################################################################
 # #     actual input
 # ##################################################################
-# # data = np.genfromtxt("final_project/SPECTF.train", delimiter=",")
+# data = np.genfromtxt("final_project/SPECTF.train", delimiter=",")
 
 # # data = np.genfromtxt("final_project/20.csv", delimiter=",")
 
 # # data = np.genfromtxt("final_project/30.csv", delimiter=",")
 
-# data = np.genfromtxt("final_project/40.csv", delimiter=",")
+# # data = np.genfromtxt("final_project/40.csv", delimiter=",")
 
 # # data = np.genfromtxt("final_project/50.csv", delimiter=",")
 
@@ -90,107 +90,106 @@ print(features)
 # print(features[0])
 
 ###################################################################
-#     intialiozing weights and such
+#     this controls all of the parameters, how many layers, how many neurons in eash layer
+#      epsilon, and epochs.. if there are more I connot think of them
 
 ##################################################################
 
 # the length is how many layers we want, hidden and output layer, and how many neurons per layers
-layers = np.array([len(features[0]), len(features[0]), len(features[0]), 1])
+layers = np.array(
+    [
+        len(features[0]),
+        1,
+    ]
+)
 
-print(layers)
-print(len(layers))
+# print(layers)
+# print(len(layers))
 
 
 # our epsilon
-epsil = 0.1
+epsil = 0.002
 # want a np array of this size
 
-epochs = 20
+epochs = 1
 
+###################################################################
+#     nothing needs to be changed after this
+
+##################################################################
 ################# WEIGHTS ###############################
 
 weights = []
 
+# loops through number a layers
 for l in range(len(layers)):
+    # first layer of weights is neaturs time number of neurons
     if l == 0:
         temp = np.random.uniform(-1, 1, size=(layers[l], len(features[0])))
+    # all other layers of weights is number of neurons on that layer times number of neurons on pervious layers
     else:
         temp = np.random.uniform(-1, 1, size=(layers[l], layers[l - 1]))
-    print(temp)
+    # print(temp)
     weights.append(temp)
 
-
+# convert it to an oddly shaped np array not sure if this is the best way to do this but seems to work
 weights = np.array(weights, dtype=object)
 
-print(weights)
+# print(weights)
 
+# simple test weights
 # weights layer 1, each layer represents the weights to one neuron
-# so an array of arrays, the length is the number of neurons and then each indivual array is the number of features
-wl1 = np.random.uniform(-1, 1, size=(layers[0], len(features[0])))
-# a simple one for testing
 # wl1 = np.array([[0.1, 0.7], [0.9, -0.1]])
-
-# print(wl1)
-
-# # weights layer 2, number of nuerons in layer two by the number of nueron in layer one
-# wl2 = np.random.uniform(-1, 1, size=(layers[1], layers[0]))
-# # just for testing
 # # wl2 = np.array([[0.4, 0.8], [-0.4, 0.3]])
-
-# # weights layer 3, number of nuerons in layer two by the number of nueron in layer one
-# wl3 = np.random.uniform(-1, 1, size=(layers[2], layers[1]))
-# # just for testing
 # # wl3 = np.array([[0.2, 0.3]])
-# wl4 = np.random.uniform(-1, 1, size=(layers[3], layers[2]))
-
-
 # # put all the weights into a new array to make it easier to reference
-# weights = np.array([wl1, wl2, wl3, wl4], dtype=object)
-
+# weights = np.array([wl1, wl2, wl3], dtype=object)
 # print("weights")
 # print(weights)
 
 ################# BIAS WEIGHTS ###############################
 
+bias_weights = []
 
-# bias weights layer 1, this is an earier array just 1-d the length equals number of neurons in layer 1
-bwl1 = np.random.uniform(-1, 1, layers[0])
-# simple test data
-# bwl1 = np.array([0.3, 0.4])
+# loops through number a layers
+for l in range(len(layers)):
+    # just one for each neuorn in the layer
+    temp = np.random.uniform(-1, 1, layers[l])
+    bias_weights.append(temp)
 
-# bias weights layer 2, see above just number of buerons in layer 2
-bwl2 = np.random.uniform(-1, 1, layers[1])
-# simple test data
-# bwl2 = np.array([-0.2, -0.6])
+# convert it to an oddly shaped np array not sure if this is the best way to do this but seems to work
+bias_weights = np.array(bias_weights, dtype=object)
 
-# bias weights layer 3, see above just number of buerons in layer 2
-bwl3 = np.random.uniform(-1, 1, layers[2])
-# simple test data
-# bwl3 = np.array([0.5])
+print("bias_weights")
+print(bias_weights)
 
-bwl4 = np.random.uniform(-1, 1, layers[3])
-
-# putting them in their own array to make it easier to refernce
-bias_weights = np.array([bwl1, bwl2, bwl3, bwl4], dtype=object)
+# so simple test data
+# # bias weights layer 1, this is an earier array just 1-d the length equals number of neurons in layer 1
+# # simple test data
+# # bwl1 = np.array([0.3, 0.4])
+# # bwl2 = np.array([-0.2, -0.6])
+# # bwl3 = np.array([0.5])
+# # putting them in their own array to make it easier to refernce
+# bias_weights = np.array([bwl1, bwl2, bwl3], dtype=object)
 # print("bias_weights")
 # print(bias_weights)
 
 ################# NEURONS ###############################
 
 
-# neurons layer 1, start at zero
-nl1 = np.zeros(layers[0])
+neurons = []
 
-# neurons layer 2, start at zero
-nl2 = np.zeros(layers[1])
+# loops through number a layers
+for l in range(len(layers)):
+    # just one for each neuorn in the layer
+    temp = np.zeros(layers[l])
+    neurons.append(temp)
 
-# neurons layer 3, start at zero
-nl3 = np.zeros(layers[2])
+# convert it to an oddly shaped np array not sure if this is the best way to do this but seems to work
+neurons = np.array(neurons, dtype=object)
 
-nl4 = np.zeros(layers[3])
-
-# our array of neurons
-neurons = np.array([nl1, nl2, nl3, nl4], dtype=object)
+print("neurons")
+print(neurons)
 
 errors = []
 
@@ -370,212 +369,137 @@ print(errors[-1])
 
 # plt.plot(errors)  # plotting by columns
 # plt.show()
-# # print(errors)
-# # # eta
+# # # print(errors)
 
-# print(weights)
-# print(bias_weights)
+# # print(weights)
+# # print(bias_weights)
 
-# print("features")
-# print(features)
+# # print("features")
+# # print(features)
 
-# print("classes")
+# # print("classes")
+# # print(classes)
+
+# answers = []
+
+
+# ###################################################################
+# #     seeing what we actually got right and wrong in training data
+# ##################################################################
+# for i in range(len(features)):
+#     ###################################################################
+#     #     forward propagation
+#     ##################################################################
+
+#     # loop through all layers
+#     for j in range(len(layers)):
+
+#         if j == 0:
+#             wtf = weights[j] * features[i]
+#         # after that weights times neurons
+#         else:
+#             # print(neurons[j - 1])
+#             wtf = weights[j] * neurons[j - 1]
+#         # print("wtf")
+#         # print(wtf)
+
+#         # sum of wights times features or neuorns depending on which level
+#         swtf = np.sum(wtf, axis=1)
+
+#         total_sum = bias_weights[j] + swtf
+
+#         # not sure why my array is becoming more than 1 d
+#         if total_sum.ndim > 1:
+#             total_sum = total_sum[0]
+
+#         # sending total sums to sigmoid function
+#         for k in range(len(total_sum)):
+#             neurons[j][k] = sig(total_sum[k])
+
+#     if neurons[-1] > 0.5:
+#         answers.append(1)
+#     elif neurons[-1] < 0.5:
+#         answers.append(0)
+#     else:
+#         answers.append(neurons[j])
+
+
+# print("******************************")
+
+
+# print(answers)
 # print(classes)
 
-answers = []
+# cm = confusion_matrix(classes, answers)
+
+# print("******************************")
+# disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+# disp.plot()
+# plt.show()
+# print("******************************")
+
+# ###################################################################
+# #     checking test data
+# ##################################################################
+
+# data = np.genfromtxt("final_project/SPECTF.test", delimiter=",")
 
 
-###################################################################
-#     seeing what we actually got right and wrong in training data
-##################################################################
-for i in range(len(features)):
-
-    # print("features[i]")
-    # print(features[i])
-
-    # print("i")
-    # print(i)
-    ###################################################################
-    #     forward propagation
-    ##################################################################
-
-    # loop through all layers
-    for j in range(len(layers)):
-
-        # print("------------")
-        # print("j")
-        # print(j)
-        # if it is the first loop weights times features
-        if j == 0:
-            wtf = weights[j] * features[i]
-        # after that weights times neurons
-        else:
-            # print(neurons[j - 1])
-            wtf = weights[j] * neurons[j - 1]
-        # print("wtf")
-        # print(wtf)
-
-        # sum of wights times features or neuorns depending on which level
-        swtf = np.sum(wtf, axis=1)
-        # print("swtf")
-        # print(swtf)
-
-        # Adding the biases
-        # print("bias_weights[j]")
-        # print(bias_weights[j])
-
-        total_sum = bias_weights[j] + swtf
-        # print("total_sum")
-        # print(total_sum)
-
-        # not sure why my array is becoming more than 1 d
-        if total_sum.ndim > 1:
-            total_sum = total_sum[0]
-        # print("total_sum")
-        # print(total_sum)
-
-        # sending total sums to sigmoid function
-        for k in range(len(total_sum)):
-            # print("j")
-            # print(j)
-            # print("k")
-            # print(k)
-            # print(neurons[j][k])
-            # that will be the value of our layer 1 neurons
-            neurons[j][k] = sig(total_sum[k])
-
-        # print("neurons[j]")
-        # print(neurons[j])
-
-        # print("------------")
-
-    if neurons[-1] > 0.5:
-        answers.append(1)
-    elif neurons[-1] < 0.5:
-        answers.append(0)
-    else:
-        answers.append(neurons[j])
-
-    # print("neurons[j]")
-    # print(neurons[j])
-
-    # print("------------")
-
-# calculate error??
-
-print("******************************")
+# classes = data[:, 0]
 
 
-print(answers)
-print(classes)
+# features = np.delete(data, 0, axis=1)
 
-cm = confusion_matrix(classes, answers)
+# print(features[0])
 
-print("******************************")
-disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-disp.plot()
-plt.show()
-print("******************************")
-###################################################################
-#     checking test data
-##################################################################
+# answers = []
+# for i in range(len(features)):
 
-data = np.genfromtxt("final_project/SPECTF.test", delimiter=",")
+#     ###################################################################
+#     #     forward propagation
+#     ##################################################################
 
-# print(data[0])
+#     # loop through all layers
+#     for j in range(len(layers)):
 
-# print("data")
-# print(data[10])
+#         if j == 0:
+#             wtf = weights[j] * features[i]
+#         # after that weights times neurons
+#         else:
+#             # print(neurons[j - 1])
+#             wtf = weights[j] * neurons[j - 1]
 
-classes = data[:, 0]
+#         # sum of wights times features or neuorns depending on which level
+#         swtf = np.sum(wtf, axis=1)
 
-# print("classes")
+#         total_sum = bias_weights[j] + swtf
+
+#         # not sure why my array is becoming more than 1 d
+#         if total_sum.ndim > 1:
+#             total_sum = total_sum[0]
+
+#         # sending total sums to sigmoid function
+#         for k in range(len(total_sum)):
+#             neurons[j][k] = sig(total_sum[k])
+
+#     if neurons[-1] > 0.5:
+#         answers.append(1)
+#     elif neurons[-1] < 0.5:
+#         answers.append(0)
+#     else:
+#         answers.append(neurons[j])
+
+
+# print("******************************")
+
+
+# print(answers)
 # print(classes)
 
-features = np.delete(data, 0, axis=1)
+# cm = confusion_matrix(classes, answers)
 
-print(features[0])
-
-answers = []
-for i in range(len(features)):
-
-    # print("features[i]")
-    # print(features[i])
-
-    # print("i")
-    # print(i)
-    ###################################################################
-    #     forward propagation
-    ##################################################################
-
-    # loop through all layers
-    for j in range(len(layers)):
-
-        # print("------------")
-        # print("j")
-        # print(j)
-        # if it is the first loop weights times features
-        if j == 0:
-            wtf = weights[j] * features[i]
-        # after that weights times neurons
-        else:
-            # print(neurons[j - 1])
-            wtf = weights[j] * neurons[j - 1]
-        # print("wtf")
-        # print(wtf)
-
-        # sum of wights times features or neuorns depending on which level
-        swtf = np.sum(wtf, axis=1)
-        # print("swtf")
-        # print(swtf)
-
-        # Adding the biases
-        # print("bias_weights[j]")
-        # print(bias_weights[j])
-
-        total_sum = bias_weights[j] + swtf
-        # print("total_sum")
-        # print(total_sum)
-
-        # not sure why my array is becoming more than 1 d
-        if total_sum.ndim > 1:
-            total_sum = total_sum[0]
-        # print("total_sum")
-        # print(total_sum)
-
-        # sending total sums to sigmoid function
-        for k in range(len(total_sum)):
-            # print("j")
-            # print(j)
-            # print("k")
-            # print(k)
-            # print(neurons[j][k])
-            # that will be the value of our layer 1 neurons
-            neurons[j][k] = sig(total_sum[k])
-
-        # print("neurons[j]")
-        # print(neurons[j])
-
-        # print("------------")
-
-    if neurons[-1] > 0.5:
-        answers.append(1)
-    elif neurons[-1] < 0.5:
-        answers.append(0)
-    else:
-        answers.append(neurons[j])
-
-
-print("******************************")
-
-
-print(answers)
-print(classes)
-
-cm = confusion_matrix(classes, answers)
-
-print("******************************")
-disp = ConfusionMatrixDisplay(confusion_matrix=cm)
-disp.plot()
-plt.show()
-print("******************************")
+# print("******************************")
+# disp = ConfusionMatrixDisplay(confusion_matrix=cm)
+# disp.plot()
+# plt.show()
+# print("******************************")
