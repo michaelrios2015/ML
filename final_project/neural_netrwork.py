@@ -108,10 +108,12 @@ layers = np.array(
 
 
 # our epsilon
-epsil = 0.002
+epsil = 0.1
 # want a np array of this size
 
-epochs = 1
+epochs = 80000
+
+error_supress = 0.0005
 
 ###################################################################
 #     nothing needs to be changed after this
@@ -120,22 +122,35 @@ epochs = 1
 ################# WEIGHTS ###############################
 
 weights = []
+# so we will just keep an array of all ones, but elements can change to zero if we need to supress that rate
+supress_weights = []
 
 # loops through number a layers
 for l in range(len(layers)):
     # first layer of weights is neaturs time number of neurons
     if l == 0:
         temp = np.random.uniform(-1, 1, size=(layers[l], len(features[0])))
+        temp_2 = np.ones((layers[l], len(features[0])))
     # all other layers of weights is number of neurons on that layer times number of neurons on pervious layers
     else:
         temp = np.random.uniform(-1, 1, size=(layers[l], layers[l - 1]))
+        temp_2 = np.ones((layers[l], layers[l - 1]))
     # print(temp)
     weights.append(temp)
+    supress_weights.append(temp_2)
 
 # convert it to an oddly shaped np array not sure if this is the best way to do this but seems to work
 weights = np.array(weights, dtype=object)
+supress_weights = np.array(supress_weights, dtype=object)
 
+# print("weights")
 # print(weights)
+
+# print("supress_weights")
+# print(supress_weights)
+
+# print("weights * supress_weights")
+# print(weights * supress_weights)
 
 # simple test weights
 # weights layer 1, each layer represents the weights to one neuron
@@ -150,18 +165,31 @@ weights = np.array(weights, dtype=object)
 ################# BIAS WEIGHTS ###############################
 
 bias_weights = []
+supress_bias_weights = []
+
 
 # loops through number a layers
 for l in range(len(layers)):
     # just one for each neuorn in the layer
     temp = np.random.uniform(-1, 1, layers[l])
+    temp_2 = np.ones(layers[l])
     bias_weights.append(temp)
+    supress_bias_weights.append(temp_2)
 
 # convert it to an oddly shaped np array not sure if this is the best way to do this but seems to work
 bias_weights = np.array(bias_weights, dtype=object)
 
-print("bias_weights")
-print(bias_weights)
+supress_bias_weights = np.array(supress_bias_weights, dtype=object)
+
+# print("bias_weights")
+# print(bias_weights)
+
+# print("supress_bias_weights")
+# print(supress_bias_weights)
+
+# print("bias weiths times supress_bias_weights")
+# print(bias_weights * supress_bias_weights)
+
 
 # so simple test data
 # # bias weights layer 1, this is an earier array just 1-d the length equals number of neurons in layer 1
@@ -298,6 +326,20 @@ for loop in range(epochs):
         # print(bias_weights[top])
         # print("--------------------------")
 
+        ########### PRUNING ##################################################################
+        # first we need to make sure nothing that was pruned comes back
+        weights[top] = weights[top] * supress_weights[top]
+        # so by here are weights are changed and we can see if any are small enough to turn off
+        weights[top] = np.where(abs(weights[top]) > error_supress, weights[top], 0)
+        # print("-----------prunning----------------")
+        # print(weights[top])
+        # if anything has been turned off it need to go over to our repressed matrix
+        supress_weights[top][weights[top] == 0] = 0
+        # print("supress_weights[top]")
+        # print(supress_weights[top])
+
+        # and then we should be fine all the old and new ones have been supressed
+
         ###################################################################
         #     backward propagation all the other layers
         ##################################################################
@@ -362,6 +404,20 @@ for loop in range(epochs):
             # print(bp)
             # print(weights[bp])
             # print("--------------------------")
+
+            ########### PRUNING ##################################################################
+            # first we need to make sure nothing that was pruned comes back
+            weights[bp] = weights[bp] * supress_weights[bp]
+            # so by here are weights are changed and we can see if any are small enough to turn off
+            weights[bp] = np.where(abs(weights[bp]) > error_supress, weights[bp], 0)
+            # print("-----------prunning----------------")
+            # print(weights[bp])
+            # if anything has been turned off it need to go over to our repressed matrix
+            supress_weights[bp][weights[bp] == 0] = 0
+            # print("supress_weights[bp]")
+            # print(supress_weights[bp])
+
+            # and then we should be fine all the old and new ones have been supressed
 
 
 print("last error")
