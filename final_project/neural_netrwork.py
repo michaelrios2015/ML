@@ -10,6 +10,26 @@ def sig(x):
     return 1 / (1 + np.exp(-x))
 
 
+# prunning function
+def prunning(original, prune, error_supress):
+
+    # print("in prunning")
+    # print(original)
+    # print(prune)
+    # first we need to make sure nothing that was pruned comes back
+    original = original * prune
+    # so by here are weights are changed and we can see if any are small enough to turn off
+    original = np.where(abs(original) > error_supress, original, 0)
+    # print("-----------prunning----------------")
+    # print(original)
+    # if anything has been turned off it need to go over to our repressed matrix
+    prune[original == 0] = 0
+    # print("supress_weights[top]")
+    # print(original)
+
+    return original, prune
+
+
 ###################################################################
 #     easy input for testing
 ##################################################################
@@ -111,9 +131,9 @@ layers = np.array(
 epsil = 0.1
 # want a np array of this size
 
-epochs = 80000
+epochs = 10000
 
-error_supress = 0.0005
+error_supress = 0.00001
 
 ###################################################################
 #     nothing needs to be changed after this
@@ -321,24 +341,30 @@ for loop in range(epochs):
         # is correct
         bias_weights[top] = bias_weights[top] + (epsil * lil_delta)
 
+        bias_weights[top], supress_bias_weights[top] = prunning(
+            bias_weights[top], supress_bias_weights[top], error_supress
+        )
+
+        # print("--------------------------")
+
+        # print("bias_weights[top]")
+        # print(bias_weights[top])
+        # print(supress_bias_weights[top])
+
+        weights[top], supress_weights[top] = prunning(
+            weights[top], supress_weights[top], error_supress
+        )
+
+        # print("weights[top]")
+        # print(weights[top])
+        # print(supress_weights[top])
+
+        # print("--------------------------")
+
         # print("top updated weights regular and bias")
         # print(weights[top])
         # print(bias_weights[top])
         # print("--------------------------")
-
-        ########### PRUNING ##################################################################
-        # first we need to make sure nothing that was pruned comes back
-        weights[top] = weights[top] * supress_weights[top]
-        # so by here are weights are changed and we can see if any are small enough to turn off
-        weights[top] = np.where(abs(weights[top]) > error_supress, weights[top], 0)
-        # print("-----------prunning----------------")
-        # print(weights[top])
-        # if anything has been turned off it need to go over to our repressed matrix
-        supress_weights[top][weights[top] == 0] = 0
-        # print("supress_weights[top]")
-        # print(supress_weights[top])
-
-        # and then we should be fine all the old and new ones have been supressed
 
         ###################################################################
         #     backward propagation all the other layers
@@ -405,19 +431,25 @@ for loop in range(epochs):
             # print(weights[bp])
             # print("--------------------------")
 
-            ########### PRUNING ##################################################################
-            # first we need to make sure nothing that was pruned comes back
-            weights[bp] = weights[bp] * supress_weights[bp]
-            # so by here are weights are changed and we can see if any are small enough to turn off
-            weights[bp] = np.where(abs(weights[bp]) > error_supress, weights[bp], 0)
-            # print("-----------prunning----------------")
-            # print(weights[bp])
-            # if anything has been turned off it need to go over to our repressed matrix
-            supress_weights[bp][weights[bp] == 0] = 0
-            # print("supress_weights[bp]")
-            # print(supress_weights[bp])
+        bias_weights[bp], supress_bias_weights[bp] = prunning(
+            bias_weights[bp], supress_bias_weights[bp], error_supress
+        )
 
-            # and then we should be fine all the old and new ones have been supressed
+        # print("--------------------------")
+
+        # print("bias_weights[bp]")
+        # print(bias_weights[bp])
+        # print(supress_bias_weights[bp])
+
+        weights[bp], supress_weights[bp] = prunning(
+            weights[bp], supress_weights[bp], error_supress
+        )
+
+        # print("weights[bp]")
+        # print(weights[bp])
+        # print(supress_weights[bp])
+
+        # print("--------------------------")
 
 
 print("last error")
