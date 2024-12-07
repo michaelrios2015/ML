@@ -18,8 +18,6 @@ def sig(x):
 
 # prunning function
 def prunning(original, prune, supress_threshold, iter, k_iter):
-    # print("============================")
-    # print(original)
     # first we need to make sure nothing that was pruned comes back
     original = original * prune
 
@@ -27,13 +25,10 @@ def prunning(original, prune, supress_threshold, iter, k_iter):
     if iter > 0 and iter % k_iter == 0:
         # so by here are weights are changed and we can see if any are small enough to turn off
         original = np.where(abs(original) < supress_threshold, 0, original)
-        # print("============================ if ")
-        # print(original)
         # if anything has been turned off it need to go over to our repressed matrix
         prune[original == 0] = 0
-    # print("============================")
-    # print(original)
 
+    # return the results
     return original, prune
 
 
@@ -60,7 +55,8 @@ def neural_net(
     # so we will just keep an array of all ones, but elements can change to zero if we need to supress that rate
     supress_weights = []
 
-    # loops through number a layers randomly pick weights and create my supreess weights matrix of all 1s
+    # loops through number a layers randomly pick weights betweem -1 and 1 and creates my supreess weights matrix of all 1s
+    # since at first no weights are supressed
     for l in range(len(_layers)):
         # first layer of weights is number of neurons times number of features
         if l == 0:
@@ -111,11 +107,10 @@ def neural_net(
     neurons = np.array(neurons, dtype=object)
 
     # using this to store my mean squared errors
-
-    # helps me se how wer are doing
+    # helps me see how wer are doing
     errors = []
-    # however many epochs we want
 
+    # however many epochs we want
     for loop in range(_epochs):
 
         # helps me keep track of the mean sum error
@@ -206,8 +201,6 @@ def neural_net(
 
                 # recalculate bias weights, a little easier as onle one to each neuron
                 bias_weights[bp] = bias_weights[bp] + _epsil * lil_delta
-                # print("bias_weights[bp]")
-                # print(bias_weights[bp])
 
                 # so we need to do some matrix multiplication but first we nee dto reshape the matrix, since there are multiple weights going to each neuron
                 lil_delta = lil_delta.reshape(-1, 1)
