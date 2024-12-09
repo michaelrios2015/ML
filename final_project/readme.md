@@ -11,11 +11,12 @@ There are a two helper functions, a very simple sigmoid function (sig) and a pru
 
 If you want to change the data first go to the section marked Input any changes that need to be done.
 
-YOur classes need to be in the np array named classes and same for the features, this data has the classes in the first column (0) but if yours is different just make the appropriate changes.
+Your classes need to be in the np array named classes and same for the features, this data has the classes in the first column (0) but if yours is different just make the appropriate changes.
 
 Then to the section marked checking test data, same as above
 
 All the the parameters and hyperparameters can be changed in the section marked USER INPUT, they are hopefully self explanatory.
+
 Once you run the program you will be given a graph of the error rate over the epochs and then a confusion matrix from your training data and then test data.
 
 I hope you find it useful
