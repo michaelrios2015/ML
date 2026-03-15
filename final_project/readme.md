@@ -1,22 +1,86 @@
-Hello! And welcome to my very simple neural network
+# Multi-Layer Neural Network from Scratch
 
-There is one main function neural_net(\_epochs, \_epsil, \_features, \_classes, \_layers, \_supress_threshold, \_k_iter,
-):
+A multilayer neural network implemented in plain Python and NumPy — no ML libraries. Built as a final project for a graduate machine learning course at Fordham University.
 
-It takes in the number of epochs you want to run (integer), the learning rate (epsilon) to use (real number), your data dived into features and classes, the number of hidden layers and size of each hidden layer to use (as an np array of the size you want). The final layer does need to have only one neuron so only two classes can be dealt with. I feel confident I could change this but I have not changed it so that is where it stands at the moment. The threshold at which to suppress a connection (supress_threshold, any real number) and the number of epoch at which to check for suppression (k_iter, an integer)
+The goal was to understand what's happening inside a neural network by building it from the ground up: forward pass, backpropagation, weight updates, and a custom pruning mechanism that suppresses weak connections during training.
 
-It will then return the weights (regular and bias) an np array of the neurons, this is used for checking testing how we did and there is probably a better way to do it but it is what I have at the moment, and an array of errors, also to help check how we did.
+---
 
-There are a two helper functions, a very simple sigmoid function (sig) and a pruning function pruning(original, prune, supress_threshold, iter, k_iter) that suppresses weights when they fall below a suppression threshold (supress_threshold) and it will check at a specified amount of epochs (k_iters). This is placed within the larger neural_net function so users really don't need to worry about it
+## Features
 
-If you want to change the data first go to the section marked Input any changes that need to be done.
+- Configurable number of hidden layers and neurons per layer
+- Sigmoid activation function
+- Backpropagation with adjustable learning rate
+- **Neural suppression (pruning):** weights that fall below a threshold are zeroed out at a specified interval during training, simulating the way biological neurons prune weak connections
+- Outputs a graph of error rate over epochs
+- Outputs confusion matrices for both training and test data
 
-Your classes need to be in the np array named classes and same for the features, this data has the classes in the first column (0) but if yours is different just make the appropriate changes.
+---
 
-Then to the section marked checking test data, same as above
+## Current limitations
 
-All the the parameters and hyperparameters can be changed in the section marked USER INPUT, they are hopefully self explanatory.
+- The final output layer is fixed at one neuron, so the network currently handles binary classification only. Extending this to multi-class output is straightforward but has not been implemented yet.
 
-Once you run the program you will be given a graph of the error rate over the epochs and then a confusion matrix from your training data and then test data.
+---
 
-I hope you find it useful
+## Main function
+
+```python
+neural_net(
+    _epochs,             # number of training epochs (int)
+    _epsil,              # learning rate (float)
+    _features,           # input features (numpy array)
+    _classes,            # target classes (numpy array)
+    _layers,             # hidden layer sizes, e.g. np.array([8, 4]) (numpy array)
+    _supress_threshold,  # weights below this value will be pruned (float)
+    _k_iter,             # how often (in epochs) to check for pruning (int)
+)
+```
+
+**Returns:**
+- Trained weights and bias weights
+- Array of neuron values (used for evaluating test data)
+- Array of error values per epoch
+
+---
+
+## Helper functions
+
+- **`sig(x)`** — sigmoid activation function
+- **`pruning(original, prune, supress_threshold, iter, k_iter)`** — zeroes out weights below the suppression threshold at every `k_iter` epochs. Called internally by `neural_net`; users don't need to call this directly.
+
+---
+
+## How to use
+
+**1. Set your data**
+
+Go to the section marked `Input any changes that need to be done`. Put your features in the `features` array and your classes in the `classes` array. This example has classes in column 0 — adjust the column index if your data is different. Do the same in the `checking test data` section for your test set.
+
+**2. Set your hyperparameters**
+
+Go to the section marked `USER INPUT` and set:
+
+| Parameter | Description |
+|---|---|
+| `_epochs` | How many times to run through the training data |
+| `_epsil` | Learning rate — smaller values learn more slowly but more stably |
+| `_layers` | Hidden layer sizes as a numpy array, e.g. `np.array([8, 4])` |
+| `_supress_threshold` | Weights below this value get pruned |
+| `_k_iter` | Check for pruning every N epochs |
+
+**3. Run**
+
+Execute the script. You'll get:
+- A plot of error rate over training epochs
+- A confusion matrix on training data
+- A confusion matrix on test data
+
+---
+
+## Requirements
+
+```
+numpy
+matplotlib
+```
